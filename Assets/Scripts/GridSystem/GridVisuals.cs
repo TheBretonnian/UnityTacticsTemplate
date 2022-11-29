@@ -26,7 +26,7 @@ public class GridVisuals : MonoBehaviour, IGridVisual
     }
 
     #region Initialization
-    public void GenerateGrid(int width, int height, int cellSize)
+    public void GenerateGrid(int width, int height, int cellSize, bool IstantiateVisuals = true)
     {
         
         _width = width;
@@ -34,13 +34,18 @@ public class GridVisuals : MonoBehaviour, IGridVisual
         _cellSize = cellSize;
 
         grid = new GameGrid<GridVisualElement2D>(width, height, cellSize, transform.position, (GameGrid<GridVisualElement2D> grid, int x, int y) => new GridVisualElement2D(grid, x, y), debugTextParent);
-        for (int i = 0; i < width; i++)
+        
+        if(IstantiateVisuals)
         {
-            for (int j = 0; j < height; j++)
+            for (int i = 0; i < width; i++)
             {
-                grid.GetGridElement(i, j).InstantiateVisualObject(cellVisual, this.transform);
+                for (int j = 0; j < height; j++)
+                {
+                    grid.GetGridElement(i, j).InstantiateVisualObject(cellVisual, this.transform);
+                }
             }
         }
+        
 
         grid.ShowDebugText(false);
 
@@ -81,7 +86,26 @@ public class GridVisuals : MonoBehaviour, IGridVisual
         return grid;
     }
 
- #endregion
+    public void SetGrid(GameGrid<GridVisualElement2D> grid)
+    {
+        this.grid = grid;
+    }
+
+    #endregion
+
+    public void DestroyGrid()
+    {
+        grid = null;
+
+        int numberOfChildren = transform.childCount;
+        int cnt = 0;
+        while (transform.childCount > 0 && cnt < numberOfChildren)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+            cnt++;
+        }
+
+    }
 
     [ContextMenu("ShowDebugText")]
     public void ShowDebugText()

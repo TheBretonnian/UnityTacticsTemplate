@@ -16,6 +16,8 @@ public class GameGridWithPathfinding<TGridElement>: GameGrid<TGridElement>
         pathfinding = new Pathfinding(width, height, cellSize, origin, diagonalAllowed, debugTextParent);
     }
 
+
+
     #region Pathfinding
     //Encapsulate public method from private class Pathfinding
     public List<Vector3> FindPath(int start_x, int start_y, int goal_x, int goal_y)
@@ -24,6 +26,16 @@ public class GameGridWithPathfinding<TGridElement>: GameGrid<TGridElement>
         return pathfinding.FindPath(start_x, start_y, goal_x, goal_y);
     }
 
+    //Wrappers from pathfinding grid
+    public PathfindingNode GetPathfindingElement(int x, int y)
+    {
+        return pathfinding.PathfindingGrid.GetGridElement(x, y);
+    }
+
+    public void SetPathfindingElement(int x, int y, PathfindingNode node)
+    {
+        pathfinding.PathfindingGrid.SetGridElement(x, y, node);
+    }
 
     public bool IsWalkable(int x, int y)
     {

@@ -14,6 +14,7 @@ public class GridElement
     public bool EnemyInRange;
     public bool DangerZone;
     public Unit unit = null;
+
     public GridElement(GameGrid<GridElement> grid, int x, int y)
     {
         this.grid = grid;
@@ -57,7 +58,8 @@ public class GridElement
 
     public override string ToString()
     {
-        return HasUnit().ToString();
+        //Print coordenates for easy orientation on editor
+        return $"({x},{y})";
     }
 
     public void SnapUnitToGrid()

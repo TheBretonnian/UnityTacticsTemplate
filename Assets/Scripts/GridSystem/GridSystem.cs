@@ -9,11 +9,12 @@ public class GridSystem : MonoBehaviour
     private GameGridWithPathfinding<GridElement> gameGrid;
 
     [Header("Grid basics")]
-    [SerializeField] private int cellSize = 1;
     [SerializeField] private int width = 10, height = 10;
+    [SerializeField] private int cellSize = 1;
     [SerializeField] private bool diagonalAllowed = true;
+    [SerializeField, Tooltip("Reference to gameObjects which instantiates a gridElement (Visuals). Do not reference manually")] private List<GameObject> gridElements;
 
-    [Header("Grid Visuals")]
+[Header("Grid Visuals")]
     [SerializeField, Tooltip("Script containing all logic for grid visualization")] private GridVisuals gridVisuals;
 
     [Header("Grid debug")]
@@ -49,15 +50,6 @@ public class GridSystem : MonoBehaviour
     //        turnSystem.NewTurnEvent += OnNewTurn;
     //    }
     //}
-
-    private void Awake()
-    {
-        //Get GridVisuals from this gameObject if reference is not set in Editor
-        if(gridVisuals==null)
-        {
-            TryGetComponent<GridVisuals>(out gridVisuals);
-        }
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -230,24 +222,66 @@ public class GridSystem : MonoBehaviour
         gameGrid = new GameGridWithPathfinding<GridElement>(width, height, cellSize, transform.position, (GameGrid<GridElement> grid, int x, int y) => new GridElement(grid,x,y), debugTextParent, diagonalAllowed);
         gameGrid.OnGridChanged += OnGridValueChanged;
         gameGrid.ShowDebugText(showDebugText);
+        gameGrid.GetPathfinding().PathfindingGrid.ShowDebugText(false);
 
         //Create visuals
+        //Get GridVisuals from this gameObject if reference is not set in Editor
         if (gridVisuals == null)
         {
-            gridVisuals = this.GetComponent<GridVisuals>();
+            TryGetComponent<GridVisuals>(out gridVisuals);
         }
-        gridVisuals?.GenerateGrid(width, height, cellSize); 
-        
-        //Setup references at GridElement helper -> to be able to edit and see values from UnityEditor
-        for(int x=0; x<width; x++)
+        //Check if gridElements already created
+        if(gridElements.Count == 0)
         {
-            for(int y=0; y<height; y++)
+            gridVisuals?.GenerateGrid(width, height, cellSize);
+
+            gridElements = new List<GameObject>();
+
+            //Setup references at GridElement helper -> to be able to edit and see values from UnityEditor
+            for (int x = 0; x < width; x++)
             {
-                GridElementHelper gHelper = null;
-                gridVisuals.GetGrid().GetGridElement(x, y).gameObject.TryGetComponent<GridElementHelper>(out gHelper);
-                gHelper.Setup(gameGrid.GetGridElement(x, y), gameGrid.GetPathfinding().PathfindingGrid.GetGridElement(x, y), gridVisuals.GetGrid().GetGridElement(x, y));
+                for (int y = 0; y < height; y++)
+                {
+                    //Get instantiated object from gridVisuals and add it to list
+                    GameObject instantiatedObject = gridVisuals.GetGrid().GetGridElement(x, y).gameObject;
+                    gridElements.Add(instantiatedObject);
+                    //Get GridElement Helper and setup with references to grid elements data
+                    instantiatedObject.TryGetComponent<GridElementHelper>(out GridElementHelper gHelper);
+                    gHelper.Setup(gameGrid.GetGridElement(x, y), gameGrid.GetPathfinding().PathfindingGrid.GetGridElement(x, y), gridVisuals.GetGrid().GetGridElement(x, y));
+                }
             }
         }
+        else
+        {
+            //Otherwise generate gridVisuals without Instantiating the visuals (just grid matrix)
+            gridVisuals?.GenerateGrid(width, height, cellSize,false);
+            //Setup references FROM GridElement helper -> to be able to update values from Editor
+            foreach (GameObject gE in gridElements)
+            {
+                GridElementHelper gHelper = null;
+                gE.TryGetComponent<GridElementHelper>(out gHelper);
+
+                gridVisuals.GetGrid().SetGridElement(gHelper.gridVisualElement.x, gHelper.gridVisualElement.y, gHelper.gridVisualElement);
+                gameGrid.SetGridElement(gHelper.gridElement.x, gHelper.gridElement.y, gHelper.gridElement);
+                gameGrid.SetPathfindingElement(gHelper.pathfindingNode.x, gHelper.pathfindingNode.y, gHelper.pathfindingNode);
+
+                //Update grid references
+                gridVisuals.GetGrid().GetGridElement(gHelper.gridVisualElement.x, gHelper.gridVisualElement.y).grid = gridVisuals.GetGrid();
+                gameGrid.GetGridElement(gHelper.gridElement.x, gHelper.gridElement.y).grid = gameGrid;
+                gameGrid.GetPathfindingElement(gHelper.pathfindingNode.x, gHelper.pathfindingNode.y).grid = gameGrid.GetPathfinding().PathfindingGrid;
+            }
+        }
+        
+        
+
+    }
+
+    public void DeleteGrid()
+    {
+        gameGrid = null;
+        gridVisuals?.DestroyGrid();
+        //Clear gridElements list: this list has the reference to gameObjects which holds gridVisuals and the GridElementHelperScript
+        gridElements = null;
     }
 
 #endregion
