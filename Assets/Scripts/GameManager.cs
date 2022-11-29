@@ -15,6 +15,12 @@ public class GameManager : MonoBehaviour
     private Controlled_Unit controlled_unit = new Controlled_Unit();
     private bool OneUnitPerTurn = false;
 
+    //Cursor Hover Logic //TODO: Move to GridSystem??
+    private Vector2Int lastMouseGridPosition = Vector2Int.zero;
+    public delegate void OnCursorHoverGrid(int grid_x, int grid_y);
+    public event OnCursorHoverGrid onCursorHoverGrid;
+
+
     [System.Serializable]
     private class Controlled_Unit
     {
@@ -32,6 +38,8 @@ public class GameManager : MonoBehaviour
         //{
         //    turnSystem.NewTurnEvent += OnNewTurn;
         //}
+
+        onCursorHoverGrid += GameManager_onCursorHoverGrid;
     }
 
     // Start is called before the first frame update
@@ -62,6 +70,22 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Hover logic -> TO DO: Play this logic on gridSystem??
+        GridElement currentGridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
+        if(currentGridElement!=null)
+        {
+            Vector2Int currentMouseGridPosition = new Vector2Int(currentGridElement.x, currentGridElement.y);
+            if (currentMouseGridPosition != lastMouseGridPosition)
+            {
+                //Update position
+                lastMouseGridPosition = currentMouseGridPosition;
+
+                //Fire Event
+                onCursorHoverGrid?.Invoke(currentMouseGridPosition.x, currentMouseGridPosition.y);
+            }
+        }
+
+
         if (Input.GetMouseButtonDown(1) && controlled_unit.Unit != null)
         {
             //Get grid elements
@@ -101,4 +125,24 @@ public class GameManager : MonoBehaviour
 
         }
     }
+
+    private void GameManager_onCursorHoverGrid(int grid_x, int grid_y)
+    {
+        if (controlled_unit.Unit.IsBusy == false)
+        {
+            //Draw tentative path
+            gridSystem.ClearGrid();
+            List<Vector3> pathSteps = gridSystem.FindPath(controlled_unit.Unit, new Vector3(grid_x, grid_y));
+            if (pathSteps != null)
+            {
+                foreach (Vector3 position in pathSteps)
+                {
+                    //MarkAsReachableOneMove
+                    gridSystem.MarkAsReachableOneMove(gridSystem.GetGridElement(position).x, gridSystem.GetGridElement(position).y);
+                }
+            }
+        }
+    }
 }
+
+
