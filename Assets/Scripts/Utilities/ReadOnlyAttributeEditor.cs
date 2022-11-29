@@ -8,6 +8,9 @@ public class ReadOnlyAttribute : PropertyAttribute
 
 }
 
+/// <summary>
+/// ReadOnlyAttribute for Editor: Warning -> not only read-only from Inspector but maybe also from Editor Scripts!! So be careful and check functions called from Editor(for instance: from OnInspectorGUI)
+/// </summary>
 [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
 public class ReadOnlyDrawer : PropertyDrawer
 {
