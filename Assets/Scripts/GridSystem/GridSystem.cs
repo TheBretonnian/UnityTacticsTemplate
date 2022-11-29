@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(GridVisuals))]
-public class GridSystem : MonoBehaviour
+public class GridSystem : MonoBehaviour, IGridVisual
 {
     private GameGridWithPathfinding<GridElement> gameGrid;
 
@@ -252,7 +252,7 @@ public class GridSystem : MonoBehaviour
 
 #endregion
 
-#region Clear methods
+    #region Clear methods
 
     public void ClearGrid()
     {
@@ -288,7 +288,7 @@ public class GridSystem : MonoBehaviour
     }
     #endregion
 
-#region Update methods (for data and visuals)
+    #region Update methods (for data and visuals)
     public void UpdateMovementRange(int selected_x, int selected_y, Unit unit)
     {
         ClearMovementRange();
@@ -379,7 +379,7 @@ public class GridSystem : MonoBehaviour
     //}
     #endregion
 
-#region Wrappers
+    #region Wrappers
     public void OnGridValueChanged(object sender, OnGridChangedEventArgs onGridChangedEventArgs)
     {
        // Debug.Log(sender.ToString() + " changed on " + onGridChangedEventArgs.x.ToString() + "," + onGridChangedEventArgs.y.ToString());
@@ -418,9 +418,34 @@ public class GridSystem : MonoBehaviour
             return null;
         }
     }
+    #endregion
 
- #endregion
+    #region IGridVisual
+    public void MarkAsReachableOneMove(int x, int y)
+    {
+        ((IGridVisual)gridVisuals).MarkAsReachableOneMove(x, y);
+    }
 
+    public void MarkAsReachableTwoMove(int x, int y)
+    {
+        ((IGridVisual)gridVisuals).MarkAsReachableTwoMove(x, y);
+    }
+
+    public void MarkAsEnemyInMeeleAttackRange(int x, int y)
+    {
+        ((IGridVisual)gridVisuals).MarkAsEnemyInMeeleAttackRange(x, y);
+    }
+
+    public void MarkAsEnemyInRangeAttackRange(int x, int y)
+    {
+        ((IGridVisual)gridVisuals).MarkAsEnemyInRangeAttackRange(x, y);
+    }
+
+    public void MarkAsPossibleTargetSpecialAbility(int x, int y)
+    {
+        ((IGridVisual)gridVisuals).MarkAsPossibleTargetSpecialAbility(x, y);
+    }
+    #endregion
 
     #region Debug
     public void ShowDebugText(bool showDebugText)
@@ -437,7 +462,7 @@ public class GridSystem : MonoBehaviour
         }
         
     }
- #endregion
+    #endregion
 
 }
 
