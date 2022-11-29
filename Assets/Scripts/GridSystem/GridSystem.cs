@@ -172,6 +172,13 @@ public class GridSystem : MonoBehaviour
     [ContextMenu("Create grid")]
     public void CreateGrid()
     {
+        if(showDebugText && debugTextParent==null)
+        {
+            GameObject debugTextParentGameObject = new GameObject("DebugText");
+            debugTextParentGameObject.transform.SetParent(transform);
+            debugTextParent = debugTextParentGameObject.transform;
+        }
+
         gameGrid = new GameGridWithPathfinding<GridElement>(width, height, cellSize, transform.position, (GameGrid<GridElement> grid, int x, int y) => new GridElement(grid,x,y), debugTextParent, diagonalAllowed);
         gameGrid.OnGridChanged += OnGridValueChanged;
         gameGrid.ShowDebugText(showDebugText);
