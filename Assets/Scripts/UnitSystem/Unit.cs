@@ -23,6 +23,7 @@ public class Unit : MonoBehaviour, IGetHealthSystem
     public bool selected;
     public bool canMove;
     public bool canAttack;
+    public bool IsBusy;
 
     //Events
     public delegate void UnitNotification(Unit unit);
@@ -65,6 +66,7 @@ public class Unit : MonoBehaviour, IGetHealthSystem
         canMove = true;
         canAttack = true;
         selected = false;
+        IsBusy = false;
     }
 
     #endregion
@@ -128,6 +130,8 @@ public class Unit : MonoBehaviour, IGetHealthSystem
     #region Movement
     public void MoveTo(List<Vector3> path, Action action)
     {
+        IsBusy = true;
+
         //Change animation
         animationHandler?.PlayAnimation("move");
 
@@ -158,6 +162,8 @@ public class Unit : MonoBehaviour, IGetHealthSystem
 
     void AttackWithDelegate(Unit enemy, Action action)
     {
+        IsBusy = true;
+
         //Dummy text
         Debug.Log($"{this.gameObject.name} attacks {enemy.gameObject.name}");
 
@@ -176,6 +182,8 @@ public class Unit : MonoBehaviour, IGetHealthSystem
         {
             animationHandler.PlayAnimation("attack", () =>
             {
+                IsBusy = false;
+
                 //Change animation
                 animationHandler.PlayAnimation("idle");
 
@@ -190,6 +198,7 @@ public class Unit : MonoBehaviour, IGetHealthSystem
         }
         else
         {
+            IsBusy = false;
             enemy.GetHealthSystem().Damage(20f);
             //Call given delegate after attack is finished
             action?.Invoke();
@@ -222,6 +231,8 @@ public class Unit : MonoBehaviour, IGetHealthSystem
         //Play animation
         //animationHandler?.PlayAnimation("attack");
         yield return animationHandler.PlayAnimationAndWaitAnimationCompleted("attack");
+
+        IsBusy = false;
 
         //Change animation
         animationHandler?.PlayAnimation("idle");
@@ -266,6 +277,7 @@ public class Unit : MonoBehaviour, IGetHealthSystem
     #region private EventHandlers to encapsulate events from subcomponents  
     private void OnPathMoveController_TargetReached(object sender, PathMoveController.TargetReachedEventArgs args)
     {
+        IsBusy = false;
         //Change animation
         animationHandler?.PlayAnimation("idle");
 
