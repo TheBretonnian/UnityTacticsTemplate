@@ -47,7 +47,7 @@ public class GameGrid<TGridElement>
                 //Create Debug Text if debugTextParent is not null
                 if(debugTextParent!=null)
                 {
-                    gridText[x, y] = CreateWorldText(gridElements[x, y].ToString(), debugTextParent, GetWorldCenterPosition(x, y), fontSize, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 1000, $"DebugText_{x}_{y}");
+                    gridText[x, y] = CreateWorldText(debugTextParent, gridElements[x, y].ToString(), GetWorldCenterPosition(x, y), fontSize, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 1000, $"{typeof(TGridElement).ToString()}_DebugText_{x}_{y}");
                     //gridText[x, y].gameObject.SetActive(true);
                     //Improve TextMesh sharpness
                     gridText[x, y].characterSize = 0.1f;
@@ -203,7 +203,7 @@ public class GameGrid<TGridElement>
         {
             for (int y = 0; y < _height; y++)
             {
-                gridText[x, y].gameObject.SetActive(enabled);
+                gridText[x, y]?.gameObject.SetActive(enabled);
             }
         }
     }
@@ -218,7 +218,7 @@ public class GameGrid<TGridElement>
     // Create Text in the World
     public static TextMesh CreateWorldText(Transform parent, string text, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignment textAlignment, int sortingOrder, string objectName)
     {
-        GameObject gameObject = new GameObject("WorldText", typeof(TextMesh));
+        GameObject gameObject = new GameObject(objectName, typeof(TextMesh));
         Transform transform = gameObject.transform;
         transform.SetParent(parent, false);
         transform.localPosition = localPosition;

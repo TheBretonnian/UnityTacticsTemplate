@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(GridVisuals))]
 public class GridSystem : MonoBehaviour
 {
     private GameGridWithPathfinding<GridElement> gameGrid;
@@ -15,7 +16,7 @@ public class GridSystem : MonoBehaviour
     [Header("Grid Visuals")]
     [SerializeField, Tooltip("Script containing all logic for grid visualization")] private GridVisuals gridVisuals;
 
-    [Header("Grid debug")] //To be transformed into normal private (still changeable in debug mode)
+    [Header("Grid debug")]
     [SerializeField] private bool showGrid = true;
     [SerializeField] private bool showDebugText = false;
     [SerializeField] private Transform debugTextParent;
@@ -24,7 +25,7 @@ public class GridSystem : MonoBehaviour
     //[Header("Units")]
     //[SerializeField] private Unit[] units;
     //[SerializeField] private TurnSystem turnSystem;
-    
+
     //private Unit selected_unit;
     //private Controlled_Unit controlled_unit = new Controlled_Unit();
     //private bool OneUnitPerTurn = false;
@@ -48,6 +49,15 @@ public class GridSystem : MonoBehaviour
     //        turnSystem.NewTurnEvent += OnNewTurn;
     //    }
     //}
+
+    private void Awake()
+    {
+        //Get GridVisuals from this gameObject if reference is not set in Editor
+        if(gridVisuals==null)
+        {
+            TryGetComponent<GridVisuals>(out gridVisuals);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()

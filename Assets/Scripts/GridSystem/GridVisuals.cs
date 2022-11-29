@@ -13,6 +13,9 @@ public class GridVisuals : MonoBehaviour, IGridVisual
     [SerializeField, Tooltip("Only for standalone use: Set true only if script is not initialised in other script like GridSystem.")] 
     private bool generateOnStart = false;
 
+    [Header("Grid debug")]
+    [SerializeField] private Transform debugTextParent;
+
     //For 2D
     private GameGrid<GridVisualElement2D> grid;
 
@@ -30,7 +33,7 @@ public class GridVisuals : MonoBehaviour, IGridVisual
         _height = height;
         _cellSize = cellSize;
 
-        grid = new GameGrid<GridVisualElement2D>(width, height, cellSize, transform.position, (GameGrid<GridVisualElement2D> grid, int x, int y) => new GridVisualElement2D(grid, x, y), this.transform);
+        grid = new GameGrid<GridVisualElement2D>(width, height, cellSize, transform.position, (GameGrid<GridVisualElement2D> grid, int x, int y) => new GridVisualElement2D(grid, x, y), debugTextParent);
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
