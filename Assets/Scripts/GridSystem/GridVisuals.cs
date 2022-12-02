@@ -169,6 +169,13 @@ public class GridVisuals : MonoBehaviour, IGridVisual
             this.spriteRenderer = null;
         }
 
+        public void Setup(GameGrid<GridVisualElement2D> grid, int x, int y)
+        {
+            this.grid = grid;
+            this.x = x;
+            this.y = y;
+        }
+
         public override string ToString()
         {
             return locked.ToString();

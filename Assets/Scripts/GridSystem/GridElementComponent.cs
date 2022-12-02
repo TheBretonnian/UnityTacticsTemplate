@@ -4,27 +4,51 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class GridElement
+public class GridElementComponent: MonoBehaviour
 {
-    public GameGrid<GridElement> grid; //Reference to parent grid
+    //References from GameGrid
+    public GameGrid<GridElementComponent> grid; //Reference to parent grid
     public int x, y;
-    public float z = 0.0f;
+
+    //GameData
+    public float z = 0.0f; //TODO: Is really necessary?
     public bool IsReachableOneMove;
     public bool IsReachableTwoMoves;
     public bool EnemyInRange;
     public bool DangerZone;
+    public bool IsWalkable = true;
     public Unit unit = null;
 
-    public GridElement(GameGrid<GridElement> grid, int x, int y)
+    //Visuals
+    public GridVisualComponent gridVisualElement;
+
+    //Pathfinding (reference)
+    public PathfindingNode pathfindingNode;
+
+    public void Setup(GameGrid<GridElementComponent> grid, int x, int y)
     {
         this.grid = grid;
         this.x = x;
         this.y = y;
+    }
 
+    public void Initialize()
+    {
         IsReachableOneMove = false;
         IsReachableTwoMoves = false;
         EnemyInRange = false;
         DangerZone = false;
+        InitGridVisualComponent();
+
+    }
+
+    private void InitGridVisualComponent()
+    {
+        if(gameObject.TryGetComponent<GridVisualComponent>(out gridVisualElement) == false)
+        {
+            gridVisualElement = gameObject.AddComponent<GridVisualComponent>();
+        }
+        gridVisualElement.Initialize();
     }
 
     #region Unit
@@ -48,8 +72,7 @@ public class GridElement
     {
         unit.transform.position = grid.GetWorldCenterPosition(this.x, this.y);
     }
-    #endregion
-
+#endregion
 
     public void ClearMoveRangeVariables()
     {
@@ -64,6 +87,20 @@ public class GridElement
         grid.TriggerGridChangedEvent(x, y);
     }
 
+    public void SetWalkable(bool walkable)
+    {
+        this.IsWalkable = walkable;
+        pathfindingNode.IsWalkable = walkable;
+    }
+
+    [ContextMenu("ToggleObstacle")]
+    public void ToggleObstacle()
+    {
+        //Toggle pathfinding
+        SetWalkable(!IsWalkable);
+        gridVisualElement.SetLocked(!IsWalkable);
+        gridVisualElement.SetVisible(!IsWalkable, Color.black);
+    }
 
     public override string ToString()
     {
