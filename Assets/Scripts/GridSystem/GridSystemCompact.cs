@@ -40,7 +40,8 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
         //If component was not found then we have to create it (Note: this can happend in both cases: grid not created, grid extended -> TODO: Validate grid status and clean up or log warning)
         if(gridElementComponent == null)
         {
-            if(gridElementComponent is MonoBehaviour)
+            //Check if GridElementComponent derives from MonoBehaviour a.k.a. is a Component
+            if(typeof(MonoBehaviour).IsAssignableFrom(typeof(GridElementComponent)))
             {
                 //Instantiate visuals prefab and attach GridElementComponent
                 GameObject newGameObject = Instantiate(gridVisualPrefab, grid.GetWorldCenterPosition(x, y), Quaternion.identity, transform);

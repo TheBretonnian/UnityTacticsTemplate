@@ -44,8 +44,10 @@ public class GridElementComponent: MonoBehaviour
 
     private void InitGridVisualComponent()
     {
-        if(gridVisualElement is MonoBehaviour)
+        //Check if GridElementComponent derives from MonoBehaviour a.k.a. is a Component
+        if(typeof(MonoBehaviour).IsAssignableFrom(typeof(GridVisualComponent)))
         {
+            //Get gridElementComponent from prefab or add new component
             if (gameObject.TryGetComponent<GridVisualComponent>(out gridVisualElement) == false)
             {
                 gridVisualElement = gameObject.AddComponent<GridVisualComponent>();
@@ -53,6 +55,7 @@ public class GridElementComponent: MonoBehaviour
         }
         else
         {
+            //Instantiate with new since it is not a component
             gridVisualElement = new GridVisualComponent();
         }       
         gridVisualElement.Initialize();

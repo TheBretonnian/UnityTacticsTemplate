@@ -10,6 +10,8 @@ public class GridVisualComponent : MonoBehaviour
     public Color color;
     public SpriteRenderer spriteRenderer;
 
+    [SerializeField]private static Color ColorReachableOneMove = Color.green;
+
     public void Initialize()
     {
         GetSpriteRenderer();
@@ -67,7 +69,7 @@ public class GridVisualComponent : MonoBehaviour
     #region IGridVisualComponent
     public void MarkAsReachableOneMove()
     {
-        Highlight(Color.green);
+        Highlight(ColorReachableOneMove);
     }
 
     public void MarkAsReachableTwoMove()
