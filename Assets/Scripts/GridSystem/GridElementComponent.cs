@@ -44,10 +44,17 @@ public class GridElementComponent: MonoBehaviour
 
     private void InitGridVisualComponent()
     {
-        if(gameObject.TryGetComponent<GridVisualComponent>(out gridVisualElement) == false)
+        if(gridVisualElement is MonoBehaviour)
         {
-            gridVisualElement = gameObject.AddComponent<GridVisualComponent>();
+            if (gameObject.TryGetComponent<GridVisualComponent>(out gridVisualElement) == false)
+            {
+                gridVisualElement = gameObject.AddComponent<GridVisualComponent>();
+            }
         }
+        else
+        {
+            gridVisualElement = new GridVisualComponent();
+        }       
         gridVisualElement.Initialize();
     }
 

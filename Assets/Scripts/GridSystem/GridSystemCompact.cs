@@ -36,19 +36,27 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
         {
             //Search reference
             gridElementComponent = gridElements.Find(gridElement => gridElement.x == x && gridElement.y == y);
-            Debug.Log($"GridElementComponent found for {x},{y}");
         }
-        //If component not found then we have to create it (Note: this can happend in both cases: grid not created, grid extended -> TODO: Validate grid status and clean up or log warning)
+        //If component was not found then we have to create it (Note: this can happend in both cases: grid not created, grid extended -> TODO: Validate grid status and clean up or log warning)
         if(gridElementComponent == null)
         {
-            //Instantiate visuals prefab and attach GridElementComponent
-            GameObject newGameObject = Instantiate(gridVisualPrefab, grid.GetWorldCenterPosition(x,y),Quaternion.identity, transform);
-            newGameObject.name = $"{gridVisualPrefab.name}_{x}_{y}";
-            //Get gridElementComponent from prefab or add new component
-            if (newGameObject.TryGetComponent<GridElementComponent>(out gridElementComponent) == false)
+            if(gridElementComponent is MonoBehaviour)
             {
-                gridElementComponent = newGameObject.AddComponent<GridElementComponent>();
+                //Instantiate visuals prefab and attach GridElementComponent
+                GameObject newGameObject = Instantiate(gridVisualPrefab, grid.GetWorldCenterPosition(x, y), Quaternion.identity, transform);
+                newGameObject.name = $"{gridVisualPrefab.name}_{x}_{y}";
+                //Get gridElementComponent from prefab or add new component
+                if (newGameObject.TryGetComponent<GridElementComponent>(out gridElementComponent) == false)
+                {
+                    gridElementComponent = newGameObject.AddComponent<GridElementComponent>();
+                }
             }
+            else
+            {
+                //GridElement is not a component, instantiate with new
+                gridElementComponent = new GridElementComponent();
+            }
+
             //Add component to list (for easy tracking)
             gridElements.Add(gridElementComponent);
         }
