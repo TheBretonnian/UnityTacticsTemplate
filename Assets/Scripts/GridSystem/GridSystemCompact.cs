@@ -16,9 +16,13 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
     private List<GridElementComponent> gridElements = new List<GridElementComponent>();
     public int Width { get => width; }
     public int Height { get => height; }
+    
 
     [Header("Grid Visuals")]
     [SerializeField] private GameObject gridVisualPrefab;
+    [SerializeField] private GridVisualConfiguration gridVisualConfig = new GridVisualConfiguration();
+    [SerializeField, Range(0.0f, 1.0f)] private float transparency = 1.0f;
+    public float Transparency { get => transparency; set => transparency = Mathf.Clamp01(value); }
 
     [Header("Grid debug")]
     [SerializeField] private bool showGrid = true;
@@ -65,6 +69,8 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
         //Setup & Initialize
         gridElementComponent?.Setup(grid, x, y);
         gridElementComponent.Initialize();
+        //Setup GridVisual config
+        gridElementComponent.gridVisualElement.SetupConfig(gridVisualConfig);
 
         return gridElementComponent;
     }
@@ -124,6 +130,14 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
         
     }
 
+    /// <summary>
+    /// Special function wrapper for editor
+    /// </summary>
+    public void ResetGridVisualConfig()
+    {
+        gridVisualConfig.ResetColorsToDefault();
+    }
+
 #endregion
 
     #region Clear methods
@@ -137,35 +151,18 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
 
     public void ClearAllVisible()
     {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (!gameGrid.GetGridElement(x, y).gridVisualElement.locked)
-                    gameGrid.GetGridElement(x, y).gridVisualElement.SetVisible(false);
-            }
-        }
+        LoopThroughGrid((int x, int y) =>{ 
+            if (!gameGrid.GetGridElement(x, y).gridVisualElement.locked) { 
+                gameGrid.GetGridElement(x, y).gridVisualElement.SetVisible(false); } });
     }
 
     public void ClearMovementRange()
     {
-        for(int x=0; x<width; x++)
-        {
-            for (int y = 0;y < height; y++)
-            {
-                gameGrid.GetGridElement(x, y).ClearMoveRangeVariables();
-            }
-        }
+        LoopThroughGrid((int x, int y) => gameGrid.GetGridElement(x, y).ClearMoveRangeVariables());
     }
     public void ClearAttackRange()
     {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                gameGrid.GetGridElement(x, y).ClearAttackRangeVariables();
-            }
-        }
+        LoopThroughGrid((int x, int y) => gameGrid.GetGridElement(x, y).ClearAttackRangeVariables());
     }
     #endregion
 
@@ -176,9 +173,10 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
 
         foreach (GridElementComponent tile in gameGrid.GetNeighbours(selected_x, selected_y, unit.GetMoveDistance(), diagonalAllowed))
         {
-            if (tile.HasUnit() == false && gameGrid.IsWalkable(tile.x, tile.y))
+            //Occupied tiles (by units) and not walkable ones are not valid move targets
+            if (tile.HasUnit() == false && tile.IsWalkable)
             {
-                //Check the neighbour in range has a feasible path and its distance (number of movements) is within Range
+                //Check if neighbour in range has a feasible path and its distance (number of movements) is within unit's move distance
                 if (gameGrid.FindPath(selected_x, selected_y, tile.x, tile.y)?.Count <= unit.GetMoveDistance())
                 {
                     tile.IsReachableOneMove = true;
@@ -202,7 +200,7 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
                 if (tile.unit.IsEnemy(unit.team))
                 {
                     tile.EnemyInRange = true;
-                    tile.gridVisualElement.MarkAsEnemyInMeeleAttackRange();
+                    tile.gridVisualElement.MarkAsEnemyInMeleeAttackRange();
                     gameGrid.SetGridElement(tile.x, tile.y, tile);
                 }
 
@@ -217,8 +215,17 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
         foreach (GridElementComponent tile in gameGrid.GetNeighbours(selected_x, selected_y, unit.GetMoveDistance() + unit.GetAttackRange(), diagonalAllowed))
         {
             tile.EnemyInRange = true;
-            tile.gridVisualElement.MarkAsEnemyInMeeleAttackRange(); //TODO: Create proper method to differentiate between use cases
+            tile.gridVisualElement.MarkAsEnemyInMeleeAttackRange(); //TODO: Create proper method to differentiate between use cases
             gameGrid.SetGridElement(tile.x, tile.y, tile);
+        }
+    }
+
+    public void UpdateTransparency()
+    {
+        //Why not LoopThroughGrid here? gridElements list will be populated and stay populated in Editor because of SerializeField. Not the case for gameGrid.
+        foreach(GridElementComponent tile in gridElements)
+        {
+            tile.gridVisualElement.SetTransparency(transparency);
         }
     }
 
@@ -263,6 +270,19 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
             return null;
         }
     }
+
+    public delegate void Looper(int x, int y);
+    public void LoopThroughGrid(Looper actionProTile)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                actionProTile?.Invoke(x, y);
+            }
+        }
+    }
+
     #endregion
 
     #region IGridVisual
@@ -278,7 +298,7 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
 
     public void MarkAsEnemyInMeeleAttackRange(int x, int y)
     {
-        GetGridElement(x, y).gridVisualElement.MarkAsEnemyInMeeleAttackRange();
+        GetGridElement(x, y).gridVisualElement.MarkAsEnemyInMeleeAttackRange();
     }
 
     public void MarkAsEnemyInRangeAttackRange(int x, int y)
