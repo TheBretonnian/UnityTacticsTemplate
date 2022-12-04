@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(GridElementHelper))]
-public class GridElementHelperEditor : Editor
+[CustomEditor(typeof(GridElement))]
+public class GridElementEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        GridElementHelper gridElementHelper = (GridElementHelper)target;
+        GridElement gridElement = (GridElement)target;
         if (GUILayout.Button("Toggle Obstacle"))
         {
-            gridElementHelper.ToggleObstacle();
+            gridElement.ToggleObstacle();
         }
 
     }

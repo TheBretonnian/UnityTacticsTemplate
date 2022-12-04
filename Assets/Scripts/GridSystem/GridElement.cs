@@ -4,28 +4,63 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class GridElement
+public class GridElement: MonoBehaviour
 {
+    //References from GameGrid
     public GameGrid<GridElement> grid; //Reference to parent grid
     public int x, y;
-    public float z = 0.0f;
+
+    //GameData
+    public float z = 0.0f; //TODO: Is really necessary?
     public bool IsReachableOneMove;
     public bool IsReachableTwoMoves;
     public bool EnemyInRange;
     public bool DangerZone;
+    public bool IsWalkable = true;
     public Unit unit = null;
 
-    public GridElement(GameGrid<GridElement> grid, int x, int y)
+    //Visuals
+    public GridVisual gridVisual;
+
+    //Pathfinding (reference)
+    public PathfindingNode pathfindingNode;
+
+    #region Init & Setup
+    public void Setup(GameGrid<GridElement> grid, int x, int y)
     {
         this.grid = grid;
         this.x = x;
         this.y = y;
+    }
 
+    public void Initialize()
+    {
         IsReachableOneMove = false;
         IsReachableTwoMoves = false;
         EnemyInRange = false;
         DangerZone = false;
+        InitGridVisual();
     }
+
+    private void InitGridVisual()
+    {
+        //Check if GridElement derives from MonoBehaviour a.k.a. is a Component
+        if(typeof(MonoBehaviour).IsAssignableFrom(typeof(GridVisual)))
+        {
+            //Get gridElementComponent from prefab or add new component
+            if (gameObject.TryGetComponent<GridVisual>(out gridVisual) == false)
+            {
+                gridVisual = gameObject.AddComponent<GridVisual>();
+            }
+        }
+        else
+        {
+            //Instantiate with new since it is not a component
+            gridVisual = new GridVisual();
+        }       
+        gridVisual.Initialize();
+    }
+    #endregion
 
     #region Unit
     public Unit GetUnit()
@@ -48,8 +83,7 @@ public class GridElement
     {
         unit.transform.position = grid.GetWorldCenterPosition(this.x, this.y);
     }
-    #endregion
-
+#endregion
 
     public void ClearMoveRangeVariables()
     {
@@ -64,6 +98,20 @@ public class GridElement
         grid.TriggerGridChangedEvent(x, y);
     }
 
+    public void SetWalkable(bool walkable)
+    {
+        this.IsWalkable = walkable;
+        pathfindingNode.IsWalkable = walkable;
+    }
+
+    [ContextMenu("ToggleObstacle")]
+    public void ToggleObstacle()
+    {
+        //Toggle pathfinding
+        SetWalkable(!IsWalkable);
+        gridVisual.SetLocked(!IsWalkable);
+        gridVisual.SetVisible(!IsWalkable, Color.black);
+    }
 
     public override string ToString()
     {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridVisualComponent : MonoBehaviour
+public class GridVisual : MonoBehaviour
 {
     public bool visible = false;
     public bool locked = false;
@@ -70,7 +70,7 @@ public class GridVisualComponent : MonoBehaviour
         this.SetVisible(true, (Color)color);
     }
 
-    #region IGridVisualComponent
+    #region IGridVisual
     public void MarkAsReachableOneMove()
     {
         Highlight(config.ReachableOneMoveColor);
@@ -99,11 +99,10 @@ public class GridVisualComponent : MonoBehaviour
     public void SetTransparency(float transparency)
     {
         transparency = Mathf.Clamp01(transparency);
-        if(spriteRenderer!= null) {
+        if(spriteRenderer!= null) 
+        {
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, transparency);
-        }
-
-        
+        }        
     }
     #endregion
 }

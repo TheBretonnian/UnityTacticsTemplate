@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3510bb65ba3263c43999b24074bf7334, type: 3}
   m_Name: GridVisualConfig
   m_EditorClassIdentifier: 
-  ReachableOneMoveColor: {r: 0.021178722, g: 1, b: 0, a: 0}
-  ReachableTwoMoveColor: {r: 1, g: 0.99695545, b: 0, a: 0}
-  EnemyInRangeAttackRangeColor: {r: 1, g: 0, b: 0, a: 0}
-  EnemyInMeleeAttackRangeColor: {r: 1, g: 0, b: 0, a: 0}
-  DangerZoneColor: {r: 1, g: 0, b: 0, a: 0}
-  SpecialAbilityColor: {r: 0, g: 1, b: 1, a: 0}
+  ReachableOneMoveColor: {r: 0, g: 1, b: 0, a: 1}
+  ReachableTwoMoveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  EnemyInRangeAttackRangeColor: {r: 1, g: 0, b: 0, a: 1}
+  EnemyInMeleeAttackRangeColor: {r: 1, g: 0, b: 0, a: 1}
+  DangerZoneColor: {r: 1, g: 0, b: 0, a: 1}
+  SpecialAbilityColor: {r: 0, g: 1, b: 1, a: 1}

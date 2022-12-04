@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Systems")]
     //[SerializeField] private TurnSystem turnSystem;
-    [SerializeField] private GridSystemCompact gridSystem;
+    [SerializeField] private GridSystem gridSystem;
 
     private Unit selected_unit;
     private Controlled_Unit controlled_unit = new Controlled_Unit();
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //Hover logic -> TO DO: Play this logic on gridSystem??
-        GridElementComponent currentGridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
+        GridElement currentGridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
         if(currentGridElement!=null)
         {
             Vector2Int currentMouseGridPosition = new Vector2Int(currentGridElement.x, currentGridElement.y);
@@ -89,8 +89,8 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1) && controlled_unit.Unit != null)
         {
             //Get grid elements
-            GridElementComponent selected_gridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
-            GridElementComponent controlledUnit_gridElement = gridSystem.GetGridElement(controlled_unit.Unit.GetPosition());
+            GridElement selected_gridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
+            GridElement controlledUnit_gridElement = gridSystem.GetGridElement(controlled_unit.Unit.GetPosition());
             //Check if valid move:
             //if (selected_unit == controlled_unit.Unit)
             //{
@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
                 foreach (Vector3 position in pathSteps)
                 {
                     //MarkAsReachableOneMove
-                    gridSystem.MarkAsReachableOneMove(gridSystem.GetGridElement(position).x, gridSystem.GetGridElement(position).y);
+                    gridSystem.GetGridElement(position).gridVisual.MarkAsReachableOneMove();
                 }
             }
         }
