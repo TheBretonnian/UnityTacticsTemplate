@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5523210651361792785}
   - component: {fileID: 3804607563367571196}
-  - component: {fileID: 1053459225238348065}
   m_Layer: 0
   m_Name: GridSquare
   m_TagString: Untagged
@@ -85,39 +84,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1053459225238348065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126129367426657165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bad39b15bd1c8194cb39fa7c64a4a2bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridElement:
-    x: 0
-    y: 0
-    z: 0
-    IsReachableOneMove: 0
-    IsReachableTwoMoves: 0
-    EnemyInRange: 0
-    DangerZone: 0
-    unit: {fileID: 0}
-  pathfindingNode:
-    x: 0
-    y: 0
-    IsWalkable: 0
-    fcost: 0
-    gcost: 0
-    hcost: 0
-  gridVisualElement:
-    x: 0
-    y: 0
-    visible: 0
-    locked: 0
-    color: {r: 0, g: 0, b: 0, a: 0}
-    gameObject: {fileID: 0}
-    spriteRenderer: {fileID: 0}

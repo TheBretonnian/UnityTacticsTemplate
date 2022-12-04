@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
                 foreach (Vector3 position in pathSteps)
                 {
                     //MarkAsReachableOneMove
-                    gridSystem.MarkAsReachableOneMove(gridSystem.GetGridElement(position).x, gridSystem.GetGridElement(position).y);
+                    gridSystem.GetGridElement(position).gridVisual.MarkAsReachableOneMove();
                 }
             }
         }
