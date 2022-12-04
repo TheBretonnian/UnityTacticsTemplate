@@ -316,7 +316,7 @@ public class GridSystemLegacy : MonoBehaviour
         {
             if (tile.HasUnit())
             {
-                if (tile.unit.IsEnemy(unit.team))
+                if (tile.Unit.IsEnemy(unit.team))
                 {
                     tile.EnemyInRange = true;
                     gameGrid.SetGridElement(tile.x, tile.y, tile);

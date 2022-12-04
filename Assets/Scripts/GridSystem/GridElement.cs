@@ -4,26 +4,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class GridElement: MonoBehaviour
+public class GridElement : MonoBehaviour
 {
     //References from GameGrid
     public GameGrid<GridElement> grid; //Reference to parent grid
     public int x, y;
 
     //GameData
-    public float z = 0.0f; //TODO: Is really necessary?
+    public float z = 0.0f; //TODO: Is really necessary or can be the game object position used instead?
     public bool IsReachableOneMove;
     public bool IsReachableTwoMoves;
     public bool EnemyInRange;
     public bool DangerZone;
     public bool IsWalkable = true;
-    public Unit unit = null;
+    [SerializeField] private Unit unit = null;
 
     //Visuals
     public GridVisual gridVisual;
 
     //Pathfinding (reference)
     public PathfindingNode pathfindingNode;
+
+    //Encapsulate unit to force using method SetUnit but still offers easy access .Unit
+    public Unit Unit { get => unit; private set => unit = value; }
 
     #region Init & Setup
     public void Setup(GameGrid<GridElement> grid, int x, int y)
@@ -72,6 +75,15 @@ public class GridElement: MonoBehaviour
     {
         this.unit = unit;
         grid.TriggerGridChangedEvent(x, y);
+        if(this.unit !=null)
+        {
+            //Trigger OnUnitEnter
+        }
+        else
+        {
+            //Trigger OnUnitExit
+        }
+
     }
 
     public bool HasUnit()

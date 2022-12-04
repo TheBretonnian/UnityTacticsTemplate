@@ -189,7 +189,7 @@ public class GridSystem : MonoBehaviour
         {
             if (tile.HasUnit())
             {
-                if (tile.unit.IsEnemy(unit.team))
+                if (tile.Unit.IsEnemy(unit.team))
                 {
                     tile.EnemyInRange = true;
                     tile.gridVisual.MarkAsEnemyInMeleeAttackRange();
