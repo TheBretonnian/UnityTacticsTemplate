@@ -20,7 +20,7 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
 
     [Header("Grid Visuals")]
     [SerializeField] private GameObject gridVisualPrefab;
-    [SerializeField] private GridVisualConfiguration gridVisualConfig = new GridVisualConfiguration();
+    [SerializeField] private GridVisualConfiguration gridVisualConfig;// = new GridVisualConfiguration();
     [SerializeField, Range(0.0f, 1.0f)] private float transparency = 1.0f;
     public float Transparency { get => transparency; set => transparency = Mathf.Clamp01(value); }
 
@@ -128,14 +128,6 @@ public class GridSystemCompact : MonoBehaviour, IGridVisual
             }
         }
         
-    }
-
-    /// <summary>
-    /// Special function wrapper for editor
-    /// </summary>
-    public void ResetGridVisualConfig()
-    {
-        gridVisualConfig.ResetColorsToDefault();
     }
 
 #endregion

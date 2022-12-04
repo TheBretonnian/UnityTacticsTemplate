@@ -32,10 +32,6 @@ public class GridSystemCompactEditor : Editor
         {
             gridSystem.DeleteGrid();
         }
-        if (GUILayout.Button("Reset Grid Visuals Config"))
-        {
-            gridSystem.ResetGridVisualConfig();
-        }
         
     }
 }
