@@ -29,6 +29,31 @@ public class GridSystem : MonoBehaviour
     [SerializeField] private bool showDebugText = false;
     [SerializeField] private Transform debugTextParent;
 
+    //Cursor Hover Logic
+    private Vector2Int lastMouseGridPosition = Vector2Int.zero;
+    public delegate void OnCursorHoverGrid(int grid_x, int grid_y);
+    public event OnCursorHoverGrid onCursorHoverGrid;
+
+    #region UnityMethods
+    private void Update()
+    {
+        //Hover logic - detect when the user hoves the mouse over a gridElement
+        GridElement currentGridElement = GetGridElement(InputManager.GetMouseWorldPosition());
+        if (currentGridElement != null)
+        {
+            Vector2Int currentMouseGridPosition = new Vector2Int(currentGridElement.x, currentGridElement.y);
+            if (currentMouseGridPosition != lastMouseGridPosition)
+            {
+                //Update position
+                lastMouseGridPosition = currentMouseGridPosition;
+
+                //Fire Event
+                onCursorHoverGrid?.Invoke(currentMouseGridPosition.x, currentMouseGridPosition.y);
+            }
+        }
+    }
+    #endregion
+
     #region Initializer
 
     private GridElement SmartInitializer(GameGrid<GridElement> grid, int x, int y)
