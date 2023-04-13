@@ -231,9 +231,13 @@ public class GridSystem : MonoBehaviour
 
         foreach (GridElement tile in gameGrid.GetNeighbours(selected_x, selected_y, unit.GetMoveDistance() + unit.GetAttackRange(), diagonalAllowed))
         {
-            tile.EnemyInRange = true;
-            tile.gridVisual.MarkAsEnemyInMeleeAttackRange(); //TODO: Create proper method to differentiate between use cases
-            gameGrid.SetGridElement(tile.x, tile.y, tile);
+            if(tile.IsWalkable)
+            {
+                tile.DangerZone = true;
+                tile.gridVisual.MarkAsEnemyInMeleeAttackRange(); //TODO: Create proper method to differentiate between use cases
+                gameGrid.SetGridElement(tile.x, tile.y, tile);
+            }
+            
         }
     }
 
