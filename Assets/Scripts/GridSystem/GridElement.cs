@@ -107,6 +107,7 @@ public class GridElement : MonoBehaviour
     public void ClearAttackRangeVariables()
     {
         EnemyInRange = false;
+        DangerZone = false;
         grid.TriggerGridChangedEvent(x, y);
     }
 

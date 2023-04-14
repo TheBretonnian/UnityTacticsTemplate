@@ -14,9 +14,9 @@ public class Unit : MonoBehaviour, IGetHealthSystem
     //Params: TO DO -> Scriptable Object
     [SerializeField] private int Iniciative = 2;
     [SerializeField] private int MoveDistance = 2;
-    private const int AttackRange = 1;
-    private const int ActionsPerTurn = 2;
-    private const bool CanRepeatActions = true;
+    [SerializeField] private int AttackRange = 1;
+    [SerializeField] private int ActionsPerTurn = 2;
+    [SerializeField] private bool CanRepeatActions = true;
 
     private int availableActions;
 
@@ -140,7 +140,7 @@ public class Unit : MonoBehaviour, IGetHealthSystem
 
         onMoveCompletedAction = action;
 
-        canAttack = ReduceAvailableActions();
+        canMove = ReduceAvailableActions();
 
     }
 
@@ -170,11 +170,11 @@ public class Unit : MonoBehaviour, IGetHealthSystem
         //Face to enemy
         if (enemy.GetPosition().x - this.GetPosition().x > 0)
         {
-            orientationHandler.SetOrientationToRight();
+            orientationHandler?.SetOrientationToRight();
         }
         else
         {
-            orientationHandler.SetOrientationToLeft();
+            orientationHandler?.SetOrientationToLeft();
         }
 
         //Play animation
@@ -182,34 +182,34 @@ public class Unit : MonoBehaviour, IGetHealthSystem
         {
             animationHandler.PlayAnimation("attack", () =>
             {
-                IsBusy = false;
-
+                OnAttack(enemy, action);
                 //Change animation
                 animationHandler.PlayAnimation("idle");
-
-                enemy.GetHealthSystem().Damage(20f);
-                //Call given delegate after attack is finished
-                action?.Invoke();
-                //Call public event after attack is finished
-                onAttackCompleted?.Invoke(this);
-                //Notify with an event that current unit has no more available actions always AFTER COMPLETING the last action 
-                if (!HasActions()) { onNoMoreActions?.Invoke(this); }
             });
         }
         else
         {
+            OnAttack(enemy, action);
+        }
+
+        void OnAttack(Unit enemy, Action action)
+        {
+            //Update status
             IsBusy = false;
+            canAttack = ReduceAvailableActions();
+            //Damage
             enemy.GetHealthSystem().Damage(20f);
+            
             //Call given delegate after attack is finished
             action?.Invoke();
             //Call public event after attack is finished
             onAttackCompleted?.Invoke(this);
             //Notify with an event that current unit has no more available actions always AFTER COMPLETING the last action 
-            if (!HasActions()) { onNoMoreActions?.Invoke(this); }
-                
-
+            if (!HasActions())
+            {
+                onNoMoreActions?.Invoke(this);
+            }
         }
-        canAttack = ReduceAvailableActions();
     }
 
     IEnumerator AttackSequence(Unit enemy, Action action)

@@ -1,25 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GameManager : MonoBehaviour
 {
+    //Singleton property
+    public static GameManager Instance;
+
     [Header("Units")]
     [SerializeField] private Unit[] units;
 
     [Header("Game Systems")]
-    //[SerializeField] private TurnSystem turnSystem;
+    [SerializeField] private TurnSystem turnSystem;
     [SerializeField] private GridSystem gridSystem;
 
     private Unit selected_unit;
     private Controlled_Unit controlled_unit = new Controlled_Unit();
     private bool OneUnitPerTurn = false;
-
-    //Cursor Hover Logic //TODO: Move to GridSystem??
-    private Vector2Int lastMouseGridPosition = Vector2Int.zero;
-    public delegate void OnCursorHoverGrid(int grid_x, int grid_y);
-    public event OnCursorHoverGrid onCursorHoverGrid;
-
 
     [System.Serializable]
     private class Controlled_Unit
@@ -31,32 +30,47 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        //Singleton
+        if (Instance != null && Instance!=this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
         //Setup
         //Turn System
-        //OneUnitPerTurn = !(turnSystem.Type == TurnSystem.TurnSystemType.TeamBased);
-        //if (turnSystem.Type == TurnSystem.TurnSystemType.IniciativeOrder)
-        //{
-        //    turnSystem.NewTurnEvent += OnNewTurn;
-        //}
+        OneUnitPerTurn = !(turnSystem.Type == TurnSystem.TurnSystemType.TeamBased);
+        if (turnSystem.Type == TurnSystem.TurnSystemType.IniciativeOrder)
+        {
+            turnSystem.NewTurnEvent += OnNewTurn;
+        }
 
-        onCursorHoverGrid += GameManager_onCursorHoverGrid;
+
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        //Grid System
         gridSystem.CreateGrid();
+        gridSystem.onCursorHoverGrid += OnCursorHoverGrid;
+        gridSystem.ClearGrid();
 
-        //Center Camera //-> GameHandler
+        //Input events
+        InputManager.Instance.OnMainCursorButtonClick += OnMainCursorButtonClick;
+        InputManager.Instance.OnSecondaryCursorButtonClick += OnSecondaryCursorButtonClick;
+
+        //Center Camera
         Camera.main.transform.position = new Vector3(gridSystem.Width / 2, gridSystem.Height / 2, Camera.main.transform.position.z);
         Camera.main.orthographicSize = ((float)gridSystem.Height + 3.0f) / 2.0f;
 
-        //Set Units position //-> GameHandler
+        //Set Units position
         foreach (Unit unit in units)
         {
-            //gridSystem.GetGridElement(unit.transform.position).SetUnit(unit);
-            //unit.onMoveCompleted += UpdateGridAfterMove;
-            //unit.onAttackCompleted += UpdateGridAfterMove;
+            gridSystem.GetGridElement(unit.transform.position).SetUnit(unit);
+            unit.onMoveCompleted += UpdateGridAfterMove;
+            unit.onAttackCompleted += UpdateGridAfterMove;
         }
 
         //Testing
@@ -67,35 +81,75 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        //Hover logic -> TO DO: Play this logic on gridSystem??
-        GridElement currentGridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
-        if(currentGridElement!=null)
+        //Handle by Turn System
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Vector2Int currentMouseGridPosition = new Vector2Int(currentGridElement.x, currentGridElement.y);
-            if (currentMouseGridPosition != lastMouseGridPosition)
-            {
-                //Update position
-                lastMouseGridPosition = currentMouseGridPosition;
+            //Clean actions before forcing new turn -> deselect unit and clear grid
+            selected_unit?.Deselect();
+            gridSystem.ClearAllVisible();
+            controlled_unit.Fixed = false;
+            //Force new turn, reset actions
+            Debug.Log("Skip turned. (Force new turned)");
+            turnSystem.ForceNewTurn();
+        }
+    }
+    private void OnMainCursorButtonClick(Vector3 cursorPosition)
+    {
+        GridElement selected_gridElement = gridSystem.GetGridElement(cursorPosition);
 
-                //Fire Event
-                onCursorHoverGrid?.Invoke(currentMouseGridPosition.x, currentMouseGridPosition.y);
+        if (selected_gridElement?.HasUnit() == true)
+        {
+            //Select unit / Deselect previous
+            selected_unit?.Deselect();
+            selected_unit = selected_gridElement.GetUnit();
+            selected_unit.Select();
+            if (!controlled_unit.Fixed || !OneUnitPerTurn)
+            {
+                if (selected_unit.team == turnSystem.CurrentPlayer.Number && turnSystem.Type != TurnSystem.TurnSystemType.IniciativeOrder)
+                {
+                    controlled_unit.Unit = selected_unit;
+                }
+            }
+
+            //After selecting, we need to update movement range if unit can move
+            gridSystem.ClearGrid();
+            if (selected_unit.canMove && selected_unit == controlled_unit.Unit)
+            {
+                gridSystem.UpdateMovementRange(selected_gridElement.x, selected_gridElement.y, selected_unit);
+            }
+            //After selecting, we need to update movement range if unit can attack
+            if (selected_unit.canAttack && selected_unit == controlled_unit.Unit)
+            {
+                gridSystem.UpdateAttackRange(selected_gridElement.x, selected_gridElement.y, selected_unit);
+            }
+            //Update Danger Zone
+            if (selected_unit.team != turnSystem.CurrentPlayer.Number)
+            {
+                gridSystem.UpdateDangerZone(selected_gridElement.x, selected_gridElement.y, selected_unit);
             }
         }
+        else
+        {
+            selected_unit?.Deselect();
+            gridSystem.ClearGrid();
+        }
+    }
 
-
-        if (Input.GetMouseButtonDown(1) && controlled_unit.Unit != null)
+    private void OnSecondaryCursorButtonClick(Vector3 cursorPosition)
+    {
+        if (controlled_unit.Unit != null)
         {
             //Get grid elements
-            GridElement selected_gridElement = gridSystem.GetGridElement(InputManager.GetMouseWorldPosition());
+            GridElement selected_gridElement = gridSystem.GetGridElement(cursorPosition);
             GridElement controlledUnit_gridElement = gridSystem.GetGridElement(controlled_unit.Unit.GetPosition());
-            //Check if valid move:
-            //if (selected_unit == controlled_unit.Unit)
-            //{
-                //if (selected_gridElement?.IsReachableOneMove == true && selected_unit.canMove)
-                //{
+            //Check if unit under controlled has focus (selected)
+            if (selected_unit == controlled_unit.Unit)
+            {
+                //Check if valid move:
+                if (selected_gridElement?.IsReachableOneMove == true && selected_unit.canMove)
+                {
 
                     //Calculate path to selected move position
                     List<Vector3> MovePath = gridSystem.FindPath(controlled_unit.Unit, selected_gridElement);
@@ -112,37 +166,89 @@ public class GameManager : MonoBehaviour
                         controlled_unit.Unit.MoveTo(MovePath, null);
 
                     }
-                //}
-                //if (selected_gridElement?.EnemyInRange == true && controlled_unit.Unit.canAttack)
-                //{
-                //    //Clear Grid
-                //    ClearGrid();
-                //    //Command Attack unit (enemy) at selected grid element
-                //    controlled_unit.Unit.Attack(selected_gridElement.unit, null);
-
-                //}
-            //}
+                }
+                //Check if valid attack target:
+                if (selected_gridElement?.EnemyInRange == true && controlled_unit.Unit.canAttack)
+                {
+                    //Clear Grid
+                    gridSystem.ClearGrid();
+                    //Command Attack unit (enemy) at selected grid element
+                    controlled_unit.Unit.Attack(selected_gridElement.Unit, null);
+                }
+            }
 
         }
     }
 
-    private void GameManager_onCursorHoverGrid(int grid_x, int grid_y)
+    private void OnCursorHoverGrid(int grid_x, int grid_y)
     {
-        if (controlled_unit.Unit.IsBusy == false)
+        //if (controlled_unit.Unit.IsBusy == false)
+        //{
+        //    //Draw tentative path
+        //    gridSystem.ClearGrid();
+        //    List<Vector3> pathSteps = gridSystem.FindPath(controlled_unit.Unit, new Vector3(grid_x, grid_y));
+        //    if (pathSteps != null)
+        //    {
+        //        foreach (Vector3 position in pathSteps)
+        //        {
+        //            //MarkAsReachableOneMove
+        //            gridSystem.GetGridElement(position).gridVisual.MarkAsReachableOneMove();
+        //        }
+        //    }
+        //}
+    }
+
+    private void OnNewTurn(int currentTurn, TurnSystem.Player currentPlayer, Unit activeUnit)
+    {
+        controlled_unit.Unit = activeUnit;
+        controlled_unit.Fixed = true;
+
+        //TO DO: Make private function Select Unit or OnUnitSelect(Unit unit)
+        selected_unit?.Deselect();
+        selected_unit = controlled_unit.Unit;
+        selected_unit.Select();
+
+        Debug.Log($"Active Unit = {activeUnit}, currentPlayer = {currentPlayer}");
+    }
+
+    public void UpdateGridAfterMove(Unit sender_unit)
+    {
+        //Update unit grid position
+        GridElement gridElement = gridSystem.GetGridElement(sender_unit.GetPosition());
+        gridElement.SetUnit(sender_unit);
+        //Snap unit to grid
+        gridElement.SnapUnitToGrid();
+        //Update grid
+        gridSystem.ClearGrid();
+        if (sender_unit.canMove)
         {
-            //Draw tentative path
-            gridSystem.ClearGrid();
-            List<Vector3> pathSteps = gridSystem.FindPath(controlled_unit.Unit, new Vector3(grid_x, grid_y));
-            if (pathSteps != null)
+            gridSystem.UpdateMovementRange(gridSystem.GetGridElement(sender_unit.GetPosition()).x, gridSystem.GetGridElement(sender_unit.GetPosition()).y, sender_unit);
+        }
+        if (sender_unit.canAttack)
+        {
+            gridSystem.UpdateAttackRange(gridSystem.GetGridElement(sender_unit.GetPosition()).x, gridSystem.GetGridElement(sender_unit.GetPosition()).y, sender_unit);
+        }
+        if (sender_unit.HasActions() == false)
+        {
+            sender_unit.Deselect();
+            selected_unit = null;
+            controlled_unit.Unit = null;
+            controlled_unit.Fixed = false;
+        }
+        else
+        {
+            if (OneUnitPerTurn)
             {
-                foreach (Vector3 position in pathSteps)
+                if (sender_unit == controlled_unit.Unit)
                 {
-                    //MarkAsReachableOneMove
-                    gridSystem.GetGridElement(position).gridVisual.MarkAsReachableOneMove();
+                    controlled_unit.Fixed = true;
+                    turnSystem.SetActiveUnit(controlled_unit.Unit);
                 }
             }
         }
+
     }
 }
+
 
 
