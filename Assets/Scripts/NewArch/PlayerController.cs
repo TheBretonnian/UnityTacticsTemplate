@@ -31,6 +31,25 @@ public void OnlyTargetSelectionClickHandler(Vector3 cursorPosition)
     ITarget target = selectedElement as ITarget;
     if(IsAbilityActive() && _targeter.IsValidTarget(target) /* it shall check for null */)
     {
+      SetTarget();
+      _abilityCommander.Command(_activeUnit,_activeAbility, target);
+    }
+  }
+} 
+
+//Handles both target and unit selection
+public void OneClickHandler(Vector3 cursorPosition)
+{
+  //On cliked on valid target, commands ability
+  //Otherwise, selection logic
+
+  //TargetValidation + Command Ability
+  ISelectable selectedElement = _selector.GetSelectedElement(cursorPosition);
+  if(selectedElement != null)
+  {
+    ITarget target = selectedElement as ITarget;
+    if(IsAbilityActive() && _targeter.IsValidTarget(target) /* it shall check for null */)
+    {
       SetTarget(target);
       _abilityCommander.Command(_activeUnit,_activeAbility, target);
     }
@@ -41,13 +60,6 @@ public void OnlyTargetSelectionClickHandler(Vector3 cursorPosition)
       SelectionLogic(selectedElement);
     }
   }
-} 
-
-//Handles both target and unit selection
-public void OneClickHandler(Vector3 cursorPosition)
-{
-  //On cliked on valid target, commands ability
-  //Otherwise, selection logic
 }
 
 //Handles both target and unit selection when target needs to be confirmed with second click
