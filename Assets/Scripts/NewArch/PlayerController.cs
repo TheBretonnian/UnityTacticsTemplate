@@ -10,7 +10,8 @@ private Selector _selector;
 private TargetAdquisition _targeter;
 private AbilityCommander _abilityCommander;
 
-public event Action<Unit> UnitSelected;
+public event Action<IUnit> UnitSelected;
+public event Action<IUnit,IAbility> AbilityActivated;
 
 public void OnlyUnitSelectionClickHandler(Vector3 cursorPosition)
 {
@@ -29,7 +30,7 @@ public void OnlyTargetSelectionClickHandler(Vector3 cursorPosition)
   if(selectedElement != null)
   {
     ITarget target = selectedElement as ITarget;
-    if(IsAbilityActive() && _targeter.IsValidTarget(target) /* it shall check for null */)
+    if(IsAbilityActivable() && _targeter.IsValidTarget(_activeUnit, target) /* it shall check for null */)
     {
       SetTarget();
       _abilityCommander.Command(_activeUnit,_activeAbility, target);
@@ -48,10 +49,10 @@ public void OneClickHandler(Vector3 cursorPosition)
   if(selectedElement != null)
   {
     ITarget target = selectedElement as ITarget;
-    if(IsAbilityActive() && _targeter.IsValidTarget(target) /* it shall check for null */)
+    if(IsAbilityActivable() && _targeter.IsValidTarget(_activeUnit, target) /* it shall check for null */)
     {
       SetTarget(target);
-      _abilityCommander.Command(_activeUnit,_activeAbility, target);
+      _abilityCommander.Command(_activeUnit, _activeAbility, target);
     }
     else //Not a valid target or no ability selected
     {
@@ -75,7 +76,26 @@ public void SecondaryClickHandler(Vector3 cursorPosition)
   //For example cancel active ability
 }
 
-private void SelectionLogic(ISelectable selectedElement){
+public ActivateAbility(IAbility ability, IUnit unit)
+{
+  if(unit == _activeUnit)
+  {
+    _activeAbility = ability;
+    //If list, add to current list
+  }
+  
+  if(ability.TargetType == auto && unit == _activeUnit)
+  {
+    _abilityCommander.Command(_activeUnit,_activeAbility, null );
+  }
+  else
+  {
+    AbilityActivated?.Invoke(_activeUnit,_activeAbility);
+  }
+}
+
+private void SelectionLogic(ISelectable selectedElement)
+{
   IUnit unit = selectedElement as IUnit;
   if(unit != null)
   {
@@ -87,12 +107,51 @@ private void SelectionLogic(ISelectable selectedElement){
     {
       SelectNoActiveUnit(unit);
     }
-    //Inform other components about the event -> Decouple VFX Logic
+    //Further common logic
     OnUnitSelected(unit);  
   }
 }
 
-private void OnUnitSelected(Unit selectedUnit)
+private void SelectActiveUnit(IUnit unit)
 {
-  UnitSelected?.Invoke(selectedUnit);
+  _selectedUnit = unit;
+  _activeUnit = unit;
 }
+
+private void SelectNoActiveUnit(IUnit unit)
+{
+  _selectedUnit = unit;
+  _activeUnit = null;
+}
+
+private void OnUnitSelected(IUnit selectedUnit)
+{
+
+  IAbility defaultUnitAbility = selectedUnit.GetDefaultAbility()
+  ActivateAbility(defaultUnitAbility, selectedUnit);
+
+  //Invoke Event to inform other components such as: 
+  // HUDController -> Update HUD with panel of selected unit
+  // VFXController -> Display/Play visuals and sounds
+  UnitSelected?.Invoke(selectedUnit);
+
+}
+
+//Check condition for commanding an ability
+bool IsAbilityActivable()
+{
+  return _activeAbility!=null && _activeUnit!=null;
+}
+
+private SetTarget(ITarget target)
+{
+  _selectedTarget = target;
+  //OnTargetSelected(target); //Fire events for VFX
+}
+
+private ClearTarget()
+{
+  //OnTargetClearing(_selectedTarget); //Fire event for VFX
+  _selectedTarget = null;
+}
+
