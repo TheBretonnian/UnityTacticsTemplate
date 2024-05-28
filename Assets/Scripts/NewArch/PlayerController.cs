@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
         //For example cancel active ability
     }
 
-    public void ActivateAbility(IAbility ability, IUnit unit)
+    public void ActivateAbility(IUnit unit, IAbility ability)
     {
         if (unit == _activeUnit)
         {
@@ -108,7 +108,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            AbilityActivated?.Invoke(_activeUnit, _activeAbility);
+            //Not only for active ability but for any selected ability -> Update VFX for no active units
+            AbilityActivated?.Invoke(unit, ability);
         }
     }
 
@@ -179,8 +180,8 @@ public class PlayerController : MonoBehaviour
     private void OnUnitSelected(IUnit selectedUnit)
     {
 
-        IAbility defaultUnitAbility = selectedUnit.GetDefaultAbility()
-        ActivateAbility(defaultUnitAbility, selectedUnit);
+        IAbility defaultUnitAbility = selectedUnit.GetDefaultAbility(); 
+        ActivateAbility(selectedUnit, defaultUnitAbility);
 
         //Invoke Event to inform other components such as: 
         // HUDController -> Update HUD with panel of selected unit
