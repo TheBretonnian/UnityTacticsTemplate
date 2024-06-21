@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
             _activeAbility = ability;
         }
 
-        if (ability.TargetType == TargetType.Auto && unit == _activeUnit)
+        if (ability.IsAutoTarget() && unit == _activeUnit)
         {
             _abilityCommander.Command(_activeUnit, _activeAbility, null);
         }
@@ -195,11 +195,13 @@ public class PlayerController : MonoBehaviour
     {
         _isPlayerInputActive = false;
         // Optional: Unsubscribe from input events here
+        //Disable Input Interface MonoBehaviour -> no updates, no events
     }
 
     private void ActivatePlayerInput()
     {
         _isPlayerInputActive = true;
         // Optional: Subscribe to input events here
+        // Enable Input Interface MonoBehaviour -> update is called again
     }
 }
