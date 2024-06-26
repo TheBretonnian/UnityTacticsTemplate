@@ -1,0 +1,22 @@
+@startuml
+
+class GamepadController
+class TouchController
+class MouseController3DCollider
+
+interface IInputController
+
+class PlayerController
+
+
+IInputController <|-- GamepadController 
+IInputController <|-- TouchController 
+IInputController <|-- MouseController3DCollider
+
+PlayerController ..> IInputController : "<<listen to>>"
+
+note right on link
+Dependency of concrete controller instance is injected on Editor
+endnote
+
+@enduml

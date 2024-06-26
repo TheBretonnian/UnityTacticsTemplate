@@ -4,62 +4,72 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    //needs to be set on Editor
+    [SerializeField] IInputController inputController;
+    [SerializeField] ITurnController turnController;
+
     private IUnit _selectedUnit;
     private IUnit _activeUnit;
     private IAbility _activeAbility;
     private ITarget _selectedTarget;
     private List<IUnit> _eligibleUnits;
-
-    private bool _isPlayerInputActive = true; 
-
-    private Selector _selector;
-    private TargetAcquisition _targeter;
-    private AbilityCommander _abilityCommander;
-
+  
     public event Action<IUnit> UnitSelected;
     public event Action<IUnit, IAbility> AbilityActivated;
+    //Events for cleaning up
+    public event Action<IUnit> UnitDeselected;
+    public event Action<IUnit, IAbility> AbilityDeactivated;
 
-    public void OnlyUnitSelectionClickHandler(Vector3 cursorPosition)
+
+    private void Awake()
     {
-        if (!_isPlayerInputActive) return;
+        //Implement here logic to adapt to desired style
+        //Subscribe to input controller events
+        if(inputController!=null)
+        {
+            inputController.MainCursorButtonClicked+=OnlyUnitSelectionClickHandler;
+            inputController.SecondaryCursorButtonClicked+=OnlyTargetSelectionClickHandler;
+        }
+        if(turnController!=null)
+        {
+            turnController.TurnStart+=TurnController_NewTurn;
+        }
+    }
 
-        ISelectable selectedElement = _selector.GetSelectedElement(cursorPosition);
+    public void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
+    {
         if (selectedElement != null)
         {
             HandleSelection(selectedElement);
         }
     }
 
-    public void OnlyTargetSelectionClickHandler(Vector3 cursorPosition)
+    public void OnlyTargetSelectionClickHandler(ISelectable selectedElement)
     {
-        if (!_isPlayerInputActive) return;
-
-        ISelectable selectedElement = _selector.GetSelectedElement(cursorPosition);
         if (selectedElement != null)
         {
             ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _targeter.IsValidTarget(_activeUnit, target))
+            if (IsAbilityActivatable() && _activeAbility.IsValidTarget(_activeUnit, target))
             {
                 SetTarget(target);
-                _abilityCommander.Command(_activeUnit, _activeAbility, target);
+                OnAbilityCommanded();
+                _activeAbility.Command(_activeUnit, target, OnAbilityExecuted);
             }
         }
     }
 
     //Handles both target and unit selection
-    public void OneClickHandler(Vector3 cursorPosition)
+    public void OneClickHandler(ISelectable selectedElement)
     {
-        if (!_isPlayerInputActive) return;
-
-        //TargetValidation + Command Ability
-        ISelectable selectedElement = _selector.GetSelectedElement(cursorPosition);
         if (selectedElement != null)
         {
             ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _targeter.IsValidTarget(_activeUnit, target))
+            if (IsAbilityActivatable() && _activeAbility.IsValidTarget(_activeUnit, target))
             {
                 SetTarget(target);
-                _abilityCommander.Command(_activeUnit, _activeAbility, target);
+                OnAbilityCommanded();
+                _activeAbility.Command(_activeUnit, target, OnAbilityExecuted);
             }
             else
             {
@@ -70,17 +80,13 @@ public class PlayerController : MonoBehaviour
     }
 
     //Handles both target and unit selection when target needs to be confirmed with second click
-    public void DoubleClickHandler(Vector3 cursorPosition)
+    public void DoubleClickHandler(ISelectable selectedElement)
     {
-        if (!_isPlayerInputActive) return;
-
         // Implement double-click logic if needed
     }
 
-    public void SecondaryClickHandler(Vector3 cursorPosition)
+    public void SecondaryClickHandler(ISelectable selectedElement)
     {
-        if (!_isPlayerInputActive) return;
-
         // Implement secondary click logic if needed (for example ability cancellation)
     }
 
@@ -93,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
         if (ability.IsAutoTarget() && unit == _activeUnit)
         {
-            _abilityCommander.Command(_activeUnit, _activeAbility, null);
+            _activeAbility.Command(_activeUnit, null, OnAbilityExecuted);
         }
         else
         {
@@ -103,7 +109,7 @@ public class PlayerController : MonoBehaviour
 
     public void TurnController_NewTurn(int currentTurn, Player currentPlayer, List<IUnit> eligibleUnits)
     {
-        if (currentPlayer.PlayerType == PlayerType.Human)
+        if (currentPlayer.IsHuman())
         {
             ActivatePlayerInput();
             _eligibleUnits = eligibleUnits;
@@ -173,6 +179,16 @@ public class PlayerController : MonoBehaviour
         UnitSelected?.Invoke(selectedUnit);
     }
 
+    private void OnAbilityCommanded()
+    {
+        DeactivatePlayerInput();
+    }
+
+    private void OnAbilityExecuted()
+    {
+        ActivatePlayerInput();
+    }
+
     //Check condition for commanding an ability
     private bool IsAbilityActivatable()
     {
@@ -193,15 +209,11 @@ public class PlayerController : MonoBehaviour
 
     private void DeactivatePlayerInput()
     {
-        _isPlayerInputActive = false;
-        // Optional: Unsubscribe from input events here
-        //Disable Input Interface MonoBehaviour -> no updates, no events
+        inputController.DisableInput();
     }
 
     private void ActivatePlayerInput()
     {
-        _isPlayerInputActive = true;
-        // Optional: Subscribe to input events here
-        // Enable Input Interface MonoBehaviour -> update is called again
+        inputController.EnableInput();
     }
 }
