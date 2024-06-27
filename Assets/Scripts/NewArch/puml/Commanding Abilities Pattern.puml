@@ -1,0 +1,32 @@
+@startuml
+
+interface IUnit
+interface IAbility
+
+
+
+class Unit <<MonoBehaviour>>
+class Ability <<ScriptableObject>>
+class PlayerController <<MonoBehaviour>>
+
+IUnit <|.. Unit
+IAbility <|.. Ability
+
+Unit o-- IAbility : List
+Ability ..> Unit
+note on link
+The Ability is a "Visitor" from Unit, 
+without the unit needing to accept it.
+The Ability receives a reference of the unit
+via his Command API from PlayerController
+endnote
+note on link
+Special use case where the Unit 
+might move and then attack
+endnote
+
+PlayerController ..> IAbility : commands
+PlayerController ..> IUnit : selects
+
+
+@enduml

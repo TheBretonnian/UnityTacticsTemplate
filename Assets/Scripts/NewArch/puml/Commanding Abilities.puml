@@ -1,0 +1,31 @@
+@startuml
+
+interface IUnit
+interface IAbility
+
+
+
+class Unit <<MonoBehaviour>>
+class MoveAbility <<ScriptableObject>>
+class MeleeAttackAbility <<ScriptableObject>>
+class RangedAttackAbility <<MonoBehaviour>>
+class PlayerController <<MonoBehaviour>>
+
+'Interface Realizations
+IUnit <|.. Unit
+IAbility <|.. MoveAbility
+IAbility <|.. MeleeAttackAbility
+IAbility <|.. RangedAttackAbility
+
+'Agregation
+Unit o-- IAbility : List
+
+MeleeAttackAbility ..> Unit
+MeleeAttackAbility ..> MoveAbility
+
+
+PlayerController ..> IAbility : Command(IUnit,ITarget)
+PlayerController ..> IUnit : selects
+
+
+@enduml
