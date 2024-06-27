@@ -1,7 +1,10 @@
 @startuml
 
 interface IUnit
-interface IAbility
+interface ITarget
+interface IAbility{
+    void Command(IUnit unit, ITarget target, Action onAbilityExecuted)
+}
 
 
 
@@ -13,6 +16,7 @@ class PlayerController <<MonoBehaviour>>
 
 'Interface Realizations
 IUnit <|.. Unit
+ITarget <|.. Unit
 IAbility <|.. MoveAbility
 IAbility <|.. MeleeAttackAbility
 IAbility <|.. RangedAttackAbility
