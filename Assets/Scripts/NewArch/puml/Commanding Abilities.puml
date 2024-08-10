@@ -1,14 +1,22 @@
 @startuml
 
-interface IUnit
+interface ISelectable
 interface ITarget
 interface IAbility{
     void Command(IUnit unit, ITarget target, Action onAbilityExecuted)
 }
+interface IUnit
+interface ITile
 
+ISelectable <|-- IUnit
+ITarget <|-- IUnit
+
+ISelectable <|-- ITile
+ITarget <|-- ITile
 
 
 class Unit <<MonoBehaviour>>
+class Tile <<MonoBehaviour>>
 class MoveAbility <<ScriptableObject>>
 class MeleeAttackAbility <<ScriptableObject>>
 class RangedAttackAbility <<MonoBehaviour>>
@@ -16,7 +24,7 @@ class PlayerController <<MonoBehaviour>>
 
 'Interface Realizations
 IUnit <|.. Unit
-ITarget <|.. Unit
+ITile <|.. Tile
 IAbility <|.. MoveAbility
 IAbility <|.. MeleeAttackAbility
 IAbility <|.. RangedAttackAbility
@@ -29,7 +37,7 @@ MeleeAttackAbility ..> MoveAbility
 
 
 PlayerController ..> IAbility : Command(IUnit,ITarget)
-PlayerController ..> IUnit : selects
+PlayerController ..> ISelectable : selects
 
 
 @enduml

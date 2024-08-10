@@ -39,10 +39,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
     {
-        if (selectedElement != null)
-        {
-            HandleSelection(selectedElement);
-        }
+        HandleSelection(selectedElement);
     }
 
     public void OnlyTargetSelectionClickHandler(ISelectable selectedElement)
@@ -132,7 +129,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleSelection(ISelectable selectedElement)
     {
-        IUnit unit = selectedElement as IUnit;
+        //If selectedElement = null, unit will be also null without throwing an exception
+        IUnit unit = selectedElement as IUnit; 
         if (unit != null)
         {
             if (_eligibleUnits.Contains(unit))
@@ -143,6 +141,13 @@ public class PlayerController : MonoBehaviour
             {
                 SelectInactiveUnit(unit);
             }            
+        }
+         //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
+        else
+        {
+            if(_selectedUnit!=null) UnitDeselected?.Invoke(_selectedUnit);
+            _selectedUnit = null;
+            _activeUnit = null;   
         }
     }
 

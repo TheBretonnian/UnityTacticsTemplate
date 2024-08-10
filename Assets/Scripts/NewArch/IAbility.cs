@@ -1,9 +1,14 @@
 public interface IAbility
 {
     public bool IsValidTarget(IUnit unit, ITarget target);
+
+    //TO DO: Segregate into another Interface, used by Unit.AbilityMgr client
     public void Command(IUnit unit, ITarget target, Action onAbilityExecuted);
 
     public bool IsAutoTarget(); //To do: As a property
+
+    //Indicates whether this ability is active at the same time of default movement
+    public bool AllowsMovement();
     
 }
 

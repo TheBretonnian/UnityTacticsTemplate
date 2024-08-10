@@ -9,11 +9,11 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
 {
 
     //Events
-    public event Action<ISelectable> MainCursorButtonClicked;
-    public event Action<ISelectable> SecondaryCursorButtonClicked;
+    public event Action<Iselectable> MainCursorButtonClicked;
+    public event Action<Iselectable> SecondaryCursorButtonClicked;
 
-    public event Action<ISelectable> SelectableHoverEntered;
-    public event Action<ISelectable> SelectableHoverExit;
+    public event Action<Iselectable> SelectableHoverEntered;
+    public event Action<Iselectable> SelectableHoverExit;
     
 
     //Private members
@@ -98,32 +98,10 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
 
     private ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
-        ISelectable selectable = null; 
-        Ray ray = _mainCamera.ScreenPointToRay(cursorPosition);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit))
-        {
-            ISelectable selectable = hit.collider.GetComponent<ISelectable>();
-            //TO DO: Try parents of Game Object with collider too
-        }
+        (void)cursorPosition; //Not used
 
-        return selectable;
-    }
-
-    private ITarget GetTargetUnderCursor(Vector3 cursorPosition)
-    {
-        ISelectable selectable = null; 
-        Ray ray = _mainCamera.ScreenPointToRay(cursorPosition);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit))
-        {
-            ITarget target = hit.collider.GetComponent<ITarget>(); 
-            //TO DO: Try parents of Game Object with collider too
-        }
-
-        return target;
+        GridElement selected_gridElement = gridSystem.GetGridElement(GetMouseWorldPosition());
+        return selected_gridElement as ISelectable;
     }
 
     /* Reference for 2d class without colliders */
