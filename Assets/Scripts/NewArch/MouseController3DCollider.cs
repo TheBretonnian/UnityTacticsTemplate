@@ -111,21 +111,6 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
         return selectable;
     }
 
-    private ITarget GetTargetUnderCursor(Vector3 cursorPosition)
-    {
-        ISelectable selectable = null; 
-        Ray ray = _mainCamera.ScreenPointToRay(cursorPosition);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit))
-        {
-            ITarget target = hit.collider.GetComponent<ITarget>(); 
-            //TO DO: Try parents of Game Object with collider too
-        }
-
-        return target;
-    }
-
     /* Reference for 2d class without colliders */
     private Vector3 GetMouseWorldPosition()
     {

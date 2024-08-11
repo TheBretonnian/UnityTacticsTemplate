@@ -9,11 +9,11 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
 {
 
     //Events
-    public event Action<Iselectable> MainCursorButtonClicked;
-    public event Action<Iselectable> SecondaryCursorButtonClicked;
+    public event Action<ISelectable> MainCursorButtonClicked;
+    public event Action<ISelectable> SecondaryCursorButtonClicked;
 
-    public event Action<Iselectable> SelectableHoverEntered;
-    public event Action<Iselectable> SelectableHoverExit;
+    public event Action<ISelectable> SelectableHoverEntered;
+    public event Action<ISelectable> SelectableHoverExit;
     
 
     //Private members
