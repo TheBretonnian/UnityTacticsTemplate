@@ -11,15 +11,15 @@ public class PlayerController : MonoBehaviour
 
     private IUnit _selectedUnit;
     private IUnit _activeUnit;
-    private IAbility _activeAbility;
+    private IAbility _selectedAbility;
     private ITarget _selectedTarget;
     private List<IUnit> _eligibleUnits;
   
     public event Action<IUnit> UnitSelected;
-    public event Action<IUnit, IAbility> AbilityActivated;
+    public event Action<IUnit, IAbility> AbilitySelected;
     //Events for cleaning up
     public event Action<IUnit> UnitDeselected;
-    public event Action<IUnit, IAbility> AbilityDeactivated;
+    public event Action<IUnit, IAbility> AbilityDeselected;
 
 
     private void Awake()
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
         if (selectedElement != null)
         {
             ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _activeAbility.IsValidTarget(_activeUnit, target))
+            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(_activeUnit, target))
             {
                 SetTarget(target);
                 OnAbilityCommanded();
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
         if (selectedElement != null)
         {
             ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _activeAbility.IsValidTarget(_activeUnit, target))
+            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(_activeUnit, target))
             {
                 SetTarget(target);
                 OnAbilityCommanded();
@@ -87,20 +87,21 @@ public class PlayerController : MonoBehaviour
         // Implement secondary click logic if needed (for example ability cancellation)
     }
 
-    public void ActivateAbility(IUnit unit, IAbility ability)
+    public void SelectAbility(IUnit unit, IAbility ability)
     {
-        if (unit == _activeUnit)
+        if(_selectedAbility!= ability)
         {
-            _activeAbility = ability;
+           if(_selectedAbility != null)
+           {
+              AbilityDeselected?.Invoke(unit, _selectedAbility);
+           }
+           _selectedAbility = ability;
+           AbilitySelected?.Invoke(unit, _selectedAbility);
         }
-
-        if (ability.IsAutoTarget() && unit == _activeUnit)
+        //Autolaunch if selected from GUI, should not be the case from default ability
+        if (_selectedAbility.IsAutoTarget() && unit == _activeUnit)
         {
-            _activeAbility.Command(_activeUnit, null, OnAbilityExecuted);
-        }
-        else
-        {
-            AbilityActivated?.Invoke(unit, ability);
+            _selectedAbility.Command(_activeUnit, null, OnAbilityExecuted);
         }
     }
 
@@ -140,7 +141,7 @@ public class PlayerController : MonoBehaviour
             } 
             else 
             {
-                DeactivateUnit(unit);
+                ActivateUnit(null);
             }
         }
         //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
@@ -156,7 +157,14 @@ public class PlayerController : MonoBehaviour
     private void SelectUnit(IUnit unit)
     {
         _selectedUnit = unit;
-        OnUnitSelected(unit);
+
+        IAbility defaultAbility = selectedUnit.GetDefaultAbility(); 
+        SelectAbility(selectedUnit, defaultAbility);
+
+        //Invoke Event to inform other components such as: 
+        // HUDController -> Update HUD with panel of selected unit
+        // VFXController -> Display/Play visuals and sounds
+        UnitSelected?.Invoke(selectedUnit);
     }
 
     private void ActivateUnit(IUnit unit)
@@ -170,17 +178,6 @@ public class PlayerController : MonoBehaviour
         {
             SelectActiveUnit(_eligibleUnits[0]);
         }
-    }
-
-    private void OnUnitSelected(IUnit selectedUnit)
-    {
-        IAbility defaultAbility = selectedUnit.GetDefaultAbility(); 
-        ActivateAbility(selectedUnit, defaultAbility);
-
-        //Invoke Event to inform other components such as: 
-        // HUDController -> Update HUD with panel of selected unit
-        // VFXController -> Display/Play visuals and sounds
-        UnitSelected?.Invoke(selectedUnit);
     }
 
     private void OnAbilityCommanded()
