@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour
     //Check condition for commanding an ability
     private bool IsAbilityActivatable()
     {
-        return _activeAbility != null && _activeUnit != null;
+        return _selectedAbility != null && _activeUnit != null;
     }
 
     private void SetTarget(ITarget target)
