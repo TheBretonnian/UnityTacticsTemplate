@@ -158,13 +158,13 @@ public class PlayerController : MonoBehaviour
     {
         _selectedUnit = unit;
 
-        IAbility defaultAbility = selectedUnit.GetDefaultAbility(); 
-        SelectAbility(selectedUnit, defaultAbility);
+        IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
+        SelectAbility(_selectedUnit, defaultAbility);
 
         //Invoke Event to inform other components such as: 
         // HUDController -> Update HUD with panel of selected unit
         // VFXController -> Display/Play visuals and sounds
-        UnitSelected?.Invoke(selectedUnit);
+        UnitSelected?.Invoke(_selectedUnit);
     }
 
     private void ActivateUnit(IUnit unit)
