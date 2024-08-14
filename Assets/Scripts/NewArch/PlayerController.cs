@@ -133,36 +133,35 @@ public class PlayerController : MonoBehaviour
         IUnit unit = selectedElement as IUnit; 
         if (unit != null)
         {
+            SelectUnit(unit);
             if (_eligibleUnits.Contains(unit))
             {
-                SelectActiveUnit(unit);
-            }
-            else
+                ActivateUnit(unit);
+            } 
+            else 
             {
-                SelectInactiveUnit(unit);
-            }            
+                DeactivateUnit(unit);
+            }
         }
-         //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
+        //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
         else
         {
+            //DeselectUnit();
             if(_selectedUnit!=null) UnitDeselected?.Invoke(_selectedUnit);
             _selectedUnit = null;
             _activeUnit = null;   
         }
     }
 
-    private void SelectActiveUnit(IUnit unit)
+    private void SelectUnit(IUnit unit)
     {
         _selectedUnit = unit;
-        _activeUnit = unit;
         OnUnitSelected(unit);
     }
 
-    private void SelectInactiveUnit(IUnit unit)
+    private void ActivateUnit(IUnit unit)
     {
-        _selectedUnit = unit;
-        _activeUnit = null;
-        OnUnitSelected(unit);
+        _activeUnit = unit;
     }
 
     private void SelectFirstEligibleUnit()
