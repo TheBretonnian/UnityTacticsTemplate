@@ -96,10 +96,13 @@ public class PlayerController : MonoBehaviour
               AbilityDeselected?.Invoke(unit, _selectedAbility);
            }
            _selectedAbility = ability;
-           AbilitySelected?.Invoke(unit, _selectedAbility);
+           if(_selectedAbility != null)
+           {
+               AbilitySelected?.Invoke(unit, _selectedAbility);
+           }
         }
         //Autolaunch if selected from GUI, should not be the case from default ability
-        if (_selectedAbility.IsAutoTarget() && unit == _activeUnit)
+        if (_selectedAbility?.IsAutoTarget() && unit == _activeUnit)
         {
             _selectedAbility.Command(_activeUnit, null, OnAbilityExecuted);
         }
@@ -147,24 +150,29 @@ public class PlayerController : MonoBehaviour
         //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
         else
         {
-            //DeselectUnit();
-            if(_selectedUnit!=null) UnitDeselected?.Invoke(_selectedUnit);
-            _selectedUnit = null;
-            _activeUnit = null;   
+            SelectUnit(null);
+            ActivateUnit(null);
         }
     }
 
     private void SelectUnit(IUnit unit)
     {
+        if (_selectedUnit != null && unit == null) UnitDeselected?.Invoke(_selectedUnit);
         _selectedUnit = unit;
-
-        IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
-        SelectAbility(_selectedUnit, defaultAbility);
-
         //Invoke Event to inform other components such as: 
         // HUDController -> Update HUD with panel of selected unit
         // VFXController -> Display/Play visuals and sounds
-        UnitSelected?.Invoke(_selectedUnit);
+        if (_selectedUnit != null)
+        {
+            UnitSelected?.Invoke(_selectedUnit);
+
+            IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
+            SelectAbility(_selectedUnit, defaultAbility);
+        }
+        else
+        {
+            SelectAbility(null, null);
+        }
     }
 
     private void ActivateUnit(IUnit unit)
