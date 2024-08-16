@@ -157,21 +157,27 @@ public class PlayerController : MonoBehaviour
 
     private void SelectUnit(IUnit unit)
     {
-        if (_selectedUnit != null && unit == null) UnitDeselected?.Invoke(_selectedUnit);
-        _selectedUnit = unit;
-        //Invoke Event to inform other components such as: 
-        // HUDController -> Update HUD with panel of selected unit
-        // VFXController -> Display/Play visuals and sounds
-        if (_selectedUnit != null)
+        if(_selectedUnit!= unit)
         {
-            UnitSelected?.Invoke(_selectedUnit);
+            if(_selectedUnit != null)
+             {
+                UnitDeselected?.Invoke(_selectedUnit);
+             } 
+            _selectedUnit = unit;
+            //Invoke Event to inform other components such as: 
+            // HUDController -> Update HUD with panel of selected unit
+            // VFXController -> Display/Play visuals and sounds
+            if (_selectedUnit != null)
+            {
+                UnitSelected?.Invoke(_selectedUnit);
 
-            IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
-            SelectAbility(_selectedUnit, defaultAbility);
-        }
-        else
-        {
-            SelectAbility(null, null);
+                IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
+                SelectAbility(_selectedUnit, defaultAbility);
+            }
+            else
+            {
+                SelectAbility(null, null);
+            }
         }
     }
 
