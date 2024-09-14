@@ -19,7 +19,6 @@ public class Pathfinding
 
     public List<Vector3> FindPath(int start_x, int start_y, int goal_x, int goal_y)
     {
-       
         List<PathfindingNode> openList = new List<PathfindingNode>();
         List<PathfindingNode> closedList = new List<PathfindingNode>();
 
@@ -29,13 +28,14 @@ public class Pathfinding
         //Check input parameter
         if (origin == null || goal == null)
         {
-            //Invalid coordenates
+            // Invalid coordinates
             return null;
         }
-        //Initialize pathfinding Grid for this search
-        for(int x=0; x<pathfindingGrid.Width; x++)
+
+        // Initialize pathfinding grid for this search
+        for (int x = 0; x < pathfindingGrid.Width; x++)
         {
-            for(int y=0; y<pathfindingGrid.Height; y++)
+            for (int y = 0; y < pathfindingGrid.Height; y++)
             {
                 PathfindingNode currentNode = pathfindingGrid.GetGridElement(x, y);
                 currentNode.gcost = int.MaxValue;
@@ -71,31 +71,38 @@ public class Pathfinding
             //Loop through neighbours
             foreach(PathfindingNode neighbour in pathfindingGrid.GetNeighbours(currentNode.x,currentNode.y,1,diagonalAllowed))
             {
-                if(!closedList.Contains(neighbour) && neighbour.IsWalkable)
+                if (closedList.Contains(neighbor) || !neighbor.IsWalkable)
                 {
-                    // tentative_gScore is the distance from start to the neighbor through current
-                    float tentative_gcost = currentNode.gcost + pathfindingGrid.CalculateDistance(currentNode.x, currentNode.y, neighbour.x, neighbour.y, diagonalAllowed);
+                    continue;
+                }
+                // tentativeGCost is the distance from start to the neighbor through current
+                // Adjust the movement cost with ZoC penalty
+                float tentativeGCost = currentNode.gcost + pathfindingGrid.CalculateDistance(currentNode.x, currentNode.y, neighbor.x, neighbor.y, diagonalAllowed);
 
-                    if (tentative_gcost < neighbour.gcost)
+                // Apply ZoC penalty if in a ZoC
+                if (neighbor.isInZoC)
+                {
+                    tentativeGCost += neighbor.zocPenalty; // Add penalty for moving through ZoC
+                }
+
+                if (tentativeGCost < neighbor.gcost)
+                {
+                    neighbor.cameFrom = currentNode;
+                    neighbor.gcost = tentativeGCost;
+                    neighbor.UpdateFCost();
+
+                    if (!openList.Contains(neighbor))
                     {
-                        // This path to neighbor is better than any previous one. Record it!
-                        neighbour.cameFrom = currentNode;
-                        neighbour.gcost = tentative_gcost;
-                        neighbour.UpdateFCost();
-                        pathfindingGrid.TriggerGridChangedEvent(neighbour.x, neighbour.y);
-
-                        if (!openList.Contains(neighbour))
-                        {
-                            openList.Add(neighbour);
-                        }
+                        openList.Add(neighbor);
                     }
                 }
             }
         }
 
-        // Open list is empty but goal was never reached
+        // Open list is empty but goal was never reached = No path found
         return null;
     }
+
 
     private PathfindingNode GetNodeWithLowestFCost(List<PathfindingNode> openList)
     {
@@ -160,6 +167,8 @@ public class PathfindingNode
     public int x, y;
     public bool IsWalkable;
     public PathfindingNode cameFrom;
+    public bool isInZoC; // New Property to indicate if tile is in Zone of Control
+    public int zocPenalty; // Penalty for entering a ZoC tile
 
 
     public float fcost, gcost, hcost;
@@ -172,6 +181,8 @@ public class PathfindingNode
 
         IsWalkable = true;
         cameFrom = null;
+        isInZoC = false; // By default, no ZoC
+        zocPenalty = 0;  // No penalty by default
     }
 
     public void UpdateFCost()
