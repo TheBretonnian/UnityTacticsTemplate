@@ -8,93 +8,9 @@ using UnityEngine;
 public class MouseController3DCollider : InputController
 {
 
-    //Events
-    public event Action<ISelectable> MainCursorButtonClicked;
-    public event Action<ISelectable> SecondaryCursorButtonClicked;
 
-    public event Action<ISelectable> SelectableHoverEntered;
-    public event Action<ISelectable> SelectableHoverExit;
     
-
-    //Private members
-    private ISelectable _currentHoverObject;
-    //Can be set to serializable to allow customization on Editor
-    private Camera _mainCamera;
     
-    //This two public methods allow abstraction from MonoBehaviour
-    public void EnableInput()
-    {
-        this.enabled = true;
-    }
-
-    public void DisableInput()
-    {
-        this.enabled = false;
-    }
-
-    void Start()
-    {
-        _mainCamera = Camera.main;
-    }
-
-    void Update()
-    {
-        DetectClick();
-
-        DetectHover();
-    }
-
-
-
-    private void DetectClick()
-    {
-        //Detect input events -> Abstract Input method and environment/2D/3D) from other scripts
-        if (IsMainButtonPressed())
-        {
-            ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
-            if(selectable != null)
-            {
-                MainCursorButtonClicked?.Invoke(selectable)
-            }
-        }
-        else if(IsSecundaryButtonPressed()) //Both left and right not allowed
-        {
-            ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
-            //Allow invoking with null to implement logic with secondary cursor button click such as Cancel Ability
-            SecondaryCursorButtonClicked?.Invoke(selectable)
-        }
-
-    }
-
-    private void DetectHover()
-    {
-        ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
-
-        if (selectable != null)
-        {
-            if (_currentHoverObject != selectable)
-            {
-                if (_currentHoverObject != null)
-                {
-                    _currentHoverObject.OnMouseExit();
-                }
-
-                _currentHoverObject = selectable;
-                _currentHoverObject.OnMouseEnter();
-                SelectableHoverEntered?.Invoke(_currentHoverObject);
-            }
-        }
-        else
-        {
-            if (_currentHoverObject != null)
-            {
-                _currentHoverObject.OnMouseExit();
-                SelectableHoverExit?.Invoke(_currentHoverObject);
-                _currentHoverObject = null;
-                
-            }
-        }
-    }
 
     private override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
