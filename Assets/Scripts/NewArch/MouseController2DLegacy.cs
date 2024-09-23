@@ -5,7 +5,7 @@ using UnityEngine;
 //The purpose of this class is to abstract the used Input Hardware from the game logic: either Mouse, Touch or or Controller. 
 //This is abstracted in the interface implemented by this class to reduce the dependency with the client.
 //This class depends on ISelectable interface
-public class MouseController3DCollider : MonoBehaviour, IInputController
+public class MouseController3DCollider : InputController
 {
 
     //Events
@@ -48,8 +48,8 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
 
     private void DetectClick()
     {
-        //Detect mouse clicks and fire events -> Abstract Input method and environment/2D/3D) from other scripts
-        if (Input.GetMouseButtonDown(0))
+        //Detect input events -> Abstract Input method and environment/2D/3D) from other scripts
+        if (IsMainButtonPressed())
         {
             ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
             if(selectable != null)
@@ -57,7 +57,7 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
                 MainCursorButtonClicked?.Invoke(selectable)
             }
         }
-        else if(Input.GetMouseButtonDown(1)) //Both left and right not allowed
+        else if(IsSecundaryButtonPressed()) //Both left and right not allowed
         {
             ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
             //Allow invoking with null to implement logic with secondary cursor button click such as Cancel Ability
@@ -96,13 +96,16 @@ public class MouseController3DCollider : MonoBehaviour, IInputController
         }
     }
 
-    private ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
+    private override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
         (void)cursorPosition; //Not used
 
         GridElement selected_gridElement = gridSystem.GetGridElement(GetMouseWorldPosition());
         return selected_gridElement as ISelectable;
     }
+	
+	private override IsMainButtonPressed() => Input.GetMouseButtonDown(0);
+	private override IsSecundaryButtonPressed() => Input.GetMouseButtonDown(1);
 
     /* Reference for 2d class without colliders */
     private Vector3 GetMouseWorldPosition()

@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        //Implement here logic to adapt to desired style
+        //Implement here logic to adapt to desired style (parameter)
         //Subscribe to input controller events
         if(inputController!=null)
         {
@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
         }
         if(turnController!=null)
         {
-            turnController.TurnStart+=TurnController_NewTurn;
+            turnController.TurnStart+=TurnController_NewTurn; //Can be a global event: GameEvent (SO Event)
         }
     }
 
