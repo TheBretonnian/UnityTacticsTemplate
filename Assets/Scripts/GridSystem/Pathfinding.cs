@@ -103,6 +103,10 @@ public class Pathfinding
         return null;
     }
 
+    public void UpdateZoC()
+    {
+        //Update ZoCInfo in PathfindingNode or in separate Grid.
+    }
 
     private PathfindingNode GetNodeWithLowestFCost(List<PathfindingNode> openList)
     {
@@ -168,7 +172,7 @@ public class PathfindingNode
     public bool IsWalkable;
     public PathfindingNode cameFrom;
     public bool isInZoC; // New Property to indicate if tile is in Zone of Control
-    public int zocPenalty; // Penalty for entering a ZoC tile
+    public int zocPenalty; // Penalty for entering a ZoC tile //CAN BE A GLOBAL PARAMETER
 
 
     public float fcost, gcost, hcost;
