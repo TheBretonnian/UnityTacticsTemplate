@@ -7,11 +7,6 @@ using UnityEngine;
 //This class depends on ISelectable interface
 public class MouseController3DCollider : InputController
 {
-
-
-    
-    
-
     private override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
         (void)cursorPosition; //Not used
