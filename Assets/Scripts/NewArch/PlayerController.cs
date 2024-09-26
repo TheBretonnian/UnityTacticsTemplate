@@ -37,12 +37,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
+    private void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
     {
         HandleSelection(selectedElement);
     }
 
-    public void OnlyTargetSelectionClickHandler(ISelectable selectedElement)
+    private void OnlyTargetSelectionClickHandler(ISelectable selectedElement)
     {
         if (selectedElement != null)
         {
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //Handles both target and unit selection
-    public void OneClickHandler(ISelectable selectedElement)
+    private void OneClickHandler(ISelectable selectedElement)
     {
         if (selectedElement != null)
         {
@@ -77,16 +77,17 @@ public class PlayerController : MonoBehaviour
     }
 
     //Handles both target and unit selection when target needs to be confirmed with second click
-    public void DoubleClickHandler(ISelectable selectedElement)
+    private void DoubleClickHandler(ISelectable selectedElement)
     {
         // Implement double-click logic if needed
     }
 
-    public void SecondaryClickHandler(ISelectable selectedElement)
+    private void SecondaryClickHandler(ISelectable selectedElement)
     {
         // Implement secondary click logic if needed (for example ability cancellation)
     }
 
+    //Shall be possibe to access it from outside (e.g. GUI Controller)
     public void SelectAbility(IUnit unit, IAbility ability)
     {
         if(_selectedAbility!= ability)
@@ -222,6 +223,7 @@ public class PlayerController : MonoBehaviour
         _selectedTarget = null;
     }
 
+    //Consider these two for public? Maybe use-case in the future
     private void DeactivatePlayerInput()
     {
         inputController.DisableInput();
