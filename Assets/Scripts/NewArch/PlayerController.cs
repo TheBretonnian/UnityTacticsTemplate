@@ -16,10 +16,10 @@ public class PlayerController : MonoBehaviour
     private List<IUnit> _eligibleUnits;
   
     public event Action<IUnit> UnitSelected;
-    public event Action<IUnit, IAbility> AbilitySelected;
+    public event Action<IAbility> AbilitySelected;
     //Events for cleaning up
     public event Action<IUnit> UnitDeselected;
-    public event Action<IUnit, IAbility> AbilityDeselected;
+    public event Action<IAbility> AbilityDeselected;
 
 
     private void Awake()
@@ -88,25 +88,28 @@ public class PlayerController : MonoBehaviour
     }
 
     //Shall be possibe to access it from outside (e.g. GUI Controller)
-    public void SelectAbility(IUnit unit, IAbility ability)
+    public void SelectAbility(IAbility ability)
     {
         if(_selectedAbility!= ability)
         {
-           if(_selectedAbility != null)
-           {
-              AbilityDeselected?.Invoke(unit, _selectedAbility);
-           }
-           _selectedAbility = ability;
-           if(_selectedAbility != null)
-           {
-               AbilitySelected?.Invoke(unit, _selectedAbility);
-           }
+            if(_selectedAbility != null)
+            {
+                AbilityDeselected?.Invoke(_selectedAbility);
+            }
+
+            _selectedAbility = ability;
+
+            if(_selectedAbility != null)
+            {
+                AbilitySelected?.Invoke(_selectedAbility);
+            }
+            //Autolaunch if selected from GUI, should not be the case from default ability
+            if (_selectedAbility?.IsAutoTarget() && _selectedUnit == _activeUnit)
+            {
+                _selectedAbility.Command(_activeUnit, null, OnAbilityExecuted);
+            }
         }
-        //Autolaunch if selected from GUI, should not be the case from default ability
-        if (_selectedAbility?.IsAutoTarget() && unit == _activeUnit)
-        {
-            _selectedAbility.Command(_activeUnit, null, OnAbilityExecuted);
-        }
+
     }
 
     public void TurnController_NewTurn(int currentTurn, Player currentPlayer, List<IUnit> eligibleUnits)
@@ -139,24 +142,24 @@ public class PlayerController : MonoBehaviour
         if (unit != null)
         {
             SelectUnit(unit);
-            if (_eligibleUnits.Contains(unit))
-            {
-                ActivateUnit(unit);
-            } 
-            else 
-            {
-                ActivateUnit(null);
-            }
+            // if (_eligibleUnits.Contains(unit))
+            // {
+            //     ActivateUnit(unit);
+            // } 
+            // else 
+            // {
+            //     ActivateUnit(null);
+            // }
         }
         //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
         else
         {
             SelectUnit(null);
-            ActivateUnit(null);
+            // ActivateUnit(null);
         }
     }
 
-    private void SelectUnit(IUnit unit)
+    public void SelectUnit(IUnit unit)
     {
         if(_selectedUnit!= unit)
         {
@@ -165,19 +168,26 @@ public class PlayerController : MonoBehaviour
                 UnitDeselected?.Invoke(_selectedUnit);
              } 
             _selectedUnit = unit;
-            //Invoke Event to inform other components such as: 
-            // HUDController -> Update HUD with panel of selected unit
-            // VFXController -> Display/Play visuals and sounds
+
             if (_selectedUnit != null)
             {
                 UnitSelected?.Invoke(_selectedUnit);
 
                 IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
-                SelectAbility(_selectedUnit, defaultAbility);
+                SelectAbility(defaultAbility);
             }
             else
             {
                 SelectAbility(null, null);
+            }
+
+            if (_eligibleUnits.Contains(unit))
+            {
+                ActivateUnit(unit);
+            } 
+            else 
+            {
+                ActivateUnit(null);
             }
         }
     }
