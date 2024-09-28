@@ -1,7 +1,7 @@
 // Event Publisher
 public class Enemy : MonoBehaviour
 {
-    public GameEvent<int> scoreEvent;
+    public IntGameEvent scoreEvent;
 
     public void Defeat()
     {
@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
 // Event Subscriber
 public class ScoreDisplay : MonoBehaviour
 {
-    public GameEvent<int> scoreEvent;
+    public IntGameEvent scoreEvent;
 
     private void OnEnable()
     {
