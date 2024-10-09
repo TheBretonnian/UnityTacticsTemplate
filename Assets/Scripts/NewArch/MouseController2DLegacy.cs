@@ -5,9 +5,9 @@ using UnityEngine;
 //The purpose of this class is to abstract the used Input Hardware from the game logic: either Mouse, Touch or or Controller. 
 //This is abstracted in the interface implemented by this class to reduce the dependency with the client.
 //This class depends on ISelectable interface
-public class MouseController3DCollider : InputController
+public class MouseController2DLegacy : InputController
 {
-    private override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
+    protected override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
         (void)cursorPosition; //Not used
 
@@ -15,8 +15,8 @@ public class MouseController3DCollider : InputController
         return selected_gridElement as ISelectable;
     }
 	
-	private override IsMainButtonPressed() => Input.GetMouseButtonDown(0);
-	private override IsSecundaryButtonPressed() => Input.GetMouseButtonDown(1);
+	protected override bool IsMainButtonPressed() => Input.GetMouseButtonDown(0);
+	protected override bool IsSecundaryButtonPressed() => Input.GetMouseButtonDown(1);
 
     /* Reference for 2d class without colliders */
     private Vector3 GetMouseWorldPosition()

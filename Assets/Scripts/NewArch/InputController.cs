@@ -16,15 +16,15 @@ public abstract class InputController : MonoBehaviour, IInputController
     public event Action<ISelectable> SelectableHoverExit;
     
 
-    //Private members
-    private ISelectable _currentHoverObject;
+    //Protected members to be used by derived
+    protected ISelectable _currentHoverObject;
     //Can be set to serializable to allow customization on Editor
-    private Camera _mainCamera;
+    protected Camera _mainCamera;
 
-    //Private abstract methods to be override
-    private abstract ISelectable GetSelectableUnderCursor(Vector3 cursorPosition);
-    private abstract bool IsMainButtonPressed();
-    private abstract bool IsSecundaryButtonPressed();
+    //Protected abstract methods to be override and used only in derived classes
+    protected abstract ISelectable GetSelectableUnderCursor(Vector3 cursorPosition);
+    protected abstract bool IsMainButtonPressed();
+    protected abstract bool IsSecundaryButtonPressed();
     
     //This two public methods allow abstraction from MonoBehaviour
     public void EnableInput()

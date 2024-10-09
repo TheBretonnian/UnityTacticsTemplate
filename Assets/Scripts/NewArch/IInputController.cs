@@ -1,11 +1,13 @@
+using System;
+
 public interface IInputController
 {
     //Cursor press button events
-    public event Action<Iselectable> MainCursorButtonClicked;
-    public event Action<Iselectable> SecondaryCursorButtonClicked;
+    public event Action<ISelectable> MainCursorButtonClicked;
+    public event Action<ISelectable> SecondaryCursorButtonClicked;
     //Cursor hover events
-    public event Action<Iselectable> SelectableHoverEntered;
-    public event Action<Iselectable> SelectableHoverExit;
+    public event Action<ISelectable> SelectableHoverEntered;
+    public event Action<ISelectable> SelectableHoverExit;
     
     //Control methods
     public void EnableInput();
