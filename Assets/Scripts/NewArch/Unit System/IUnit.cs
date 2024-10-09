@@ -14,5 +14,6 @@ using System.IO;
 
 
 public interface IUnit  {
+    public IAbility GetDefaultAbility();
 
 }//end IUnit

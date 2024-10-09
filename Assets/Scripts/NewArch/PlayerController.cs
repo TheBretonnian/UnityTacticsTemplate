@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-    //needs to be set on Editor
-    [SerializeField] IInputController inputController;
-    [SerializeField] ITurnController turnController;
+    /*[SerializeField]*/private IInputController inputController;
 
     private IUnit _selectedUnit;
     private IUnit _activeUnit;
@@ -47,7 +44,7 @@ public class PlayerController : MonoBehaviour
             {
                 SetTarget(target);
                 OnAbilityCommanded();
-                _activeAbility.Command(_activeUnit, target, OnAbilityExecuted);
+                _selectedAbility.Command(_activeUnit, target, OnAbilityExecuted);
             }
         }
     }
@@ -62,7 +59,7 @@ public class PlayerController : MonoBehaviour
             {
                 SetTarget(target);
                 OnAbilityCommanded();
-                _activeAbility.Command(_activeUnit, target, OnAbilityExecuted);
+                _selectedAbility.Command(_activeUnit, target, OnAbilityExecuted);
             }
             else
             {
@@ -100,7 +97,7 @@ public class PlayerController : MonoBehaviour
                 AbilitySelected?.Invoke(_selectedAbility);
             }
             //Autolaunch if selected from GUI, should not be the case from default ability
-            if (_selectedAbility?.IsAutoTarget() && _selectedUnit == _activeUnit)
+            if ((_selectedAbility?.IsAutoTarget() == true) && _selectedUnit == _activeUnit)
             {
                 _selectedAbility.Command(_activeUnit, null, OnAbilityExecuted);
             }
@@ -116,7 +113,7 @@ public class PlayerController : MonoBehaviour
         if (turnData.CurrentPlayer.IsHuman)
         {
             ActivatePlayerInput();
-            _eligibleUnits = turnData.eligibleUnits;
+            _eligibleUnits = turnData.EligibleUnits;
             SelectFirstEligibleUnit();
         }
         else
@@ -170,7 +167,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                SelectAbility(null, null);
+                SelectAbility(null);
             }
 
             if (_eligibleUnits.Contains(unit))
@@ -193,7 +190,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_eligibleUnits.Count > 0)
         {
-            SelectActiveUnit(_eligibleUnits[0]);
+            SelectUnit(_eligibleUnits[0]);
         }
     }
 
