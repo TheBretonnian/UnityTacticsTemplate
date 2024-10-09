@@ -31,10 +31,6 @@ public class PlayerController : MonoBehaviour
             inputController.MainCursorButtonClicked+=OnlyUnitSelectionClickHandler;
             inputController.SecondaryCursorButtonClicked+=OnlyTargetSelectionClickHandler;
         }
-        if(turnController!=null)
-        {
-            turnController.TurnStart+=TurnController_NewTurn; //Can be a global event: GameEvent (SO Event)
-        }
     }
 
     private void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
@@ -112,12 +108,15 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void TurnController_NewTurn(int currentTurn, Player currentPlayer, List<IUnit> eligibleUnits)
+    //Notifies the PlayerController about a new turn. 
+    //It can be called directly by a class holding the reference
+    //or subscribed to a public event as delegate
+    public void Turn_NewTurn(TurnData turnData)
     {
-        if (currentPlayer.IsHuman())
+        if (turnData.CurrentPlayer.IsHuman)
         {
             ActivatePlayerInput();
-            _eligibleUnits = eligibleUnits;
+            _eligibleUnits = turnData.eligibleUnits;
             SelectFirstEligibleUnit();
         }
         else
@@ -126,7 +125,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void UnitManager_UnitExhausted(IUnit unit)
+    //Notifies the PlayerController about a unit has exhausted all his action points. 
+    //Typically subscribed to a public event as delegate
+    public void UnitEvent_UnitExhausted(IUnit unit)
     {
         if (_eligibleUnits.Contains(unit))
         {
@@ -142,20 +143,11 @@ public class PlayerController : MonoBehaviour
         if (unit != null)
         {
             SelectUnit(unit);
-            // if (_eligibleUnits.Contains(unit))
-            // {
-            //     ActivateUnit(unit);
-            // } 
-            // else 
-            // {
-            //     ActivateUnit(null);
-            // }
         }
-        //Optionally deselect unit if Player clicks on non unit (e.g. terrain)
+        //Deselect unit if Player clicks on non unit (e.g. terrain)
         else
         {
             SelectUnit(null);
-            // ActivateUnit(null);
         }
     }
 

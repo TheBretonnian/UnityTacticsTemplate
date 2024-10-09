@@ -1,4 +1,6 @@
-public UnitDataMap<T>
+using System.Collections.Generic;
+
+public class UnitDataMap<T>
 {
     private Dictionary<IUnit,T> dictionary;
 
