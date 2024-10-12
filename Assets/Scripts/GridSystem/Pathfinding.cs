@@ -69,7 +69,7 @@ public class Pathfinding
             closedList.Add(currentNode);
 
             //Loop through neighbours
-            foreach(PathfindingNode neighbour in pathfindingGrid.GetNeighbours(currentNode.x,currentNode.y,1,diagonalAllowed))
+            foreach(PathfindingNode neighbor in pathfindingGrid.GetNeighbours(currentNode.x,currentNode.y,1,diagonalAllowed))
             {
                 if (closedList.Contains(neighbor) || !neighbor.IsWalkable)
                 {
