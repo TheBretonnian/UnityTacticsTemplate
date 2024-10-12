@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class SquareGrid<T> : IGrid
+public class SquareGrid<T> : IGrid<T>
 {
     private T[,] grid;
 
@@ -16,26 +16,23 @@ public class SquareGrid<T> : IGrid
         grid = new T[width, height];
     }
 
-    // Example implementation of GetElement method
-    public object GetElement(Vector2Int localCoordinates)
+    public T GetElement(Vector2Int localCoordinates)
     {
         if (IsWithinBounds(localCoordinates))
         {
             return grid[localCoordinates.x, localCoordinates.y];
         }
-        return null;
+        return default; //default in classes is null
     }
 
-    // Example implementation of CalculateDistance method
     public float CalculateDistance(Vector2Int orig, Vector2Int dest)
     {
        return Vector2Int.Distance(orig, dest);
     }
 
-    // Example implementation of GetNeighbours method
-    public HashSet<object> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed)
+    public HashSet<T> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed)
     {
-        List<object> neighbours = new List<object>();
+        List<T> neighbours = new List<T>();
         int[,] directions = diagonalAllowed ? 
             new int[,] { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} } : 
             new int[,] { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
