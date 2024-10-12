@@ -169,7 +169,7 @@ public class PathfindingNode
 {
     public GameGrid<PathfindingNode> grid; //Reference to parent grid
     public int x, y;
-    public bool IsWalkable;
+    public bool _isWalkable;
     public PathfindingNode cameFrom;
     public bool isInZoC; // New Property to indicate if tile is in Zone of Control
     public int zocPenalty; // Penalty for entering a ZoC tile //CAN BE A GLOBAL PARAMETER
@@ -192,6 +192,11 @@ public class PathfindingNode
     public void UpdateFCost()
     {
         fcost = gcost + hcost;
+    }
+
+    public bool IsWalkable()
+    {
+        return _isWalkable;
     }
 
     public override string ToString()
