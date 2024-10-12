@@ -42,7 +42,3 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
         grid = new SquareGrid<Tile>(Width,Height);
     }
 }
-
-
-
-public class Tile{};
