@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public interface IPathfindingNode
+public interface IPathfindingNode : IBasicGridElement
 {
-    public Vector2Int LocalCoordinates{ get; }
     IPathfindingNode CameFrom { get; set; }
     bool IsInZoC { get; set; }
     int ZoCPenalty { get; set; }

@@ -7,7 +7,7 @@ using UnityEngine;
 // without needing to know:
 // 1. the grid field
 // 2. the grid layout (geometry) : square / hex / others...
-public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
+public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
 {
     //Fields
     private int _height;
@@ -16,7 +16,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
 
-    private SquareGrid<Tile> grid;
+    private SquareGrid<ITile> grid; //This can be converted to SquareGrid in case this class goes into User Case layer
 
     //Properties
     public int Height {get => _height;}
@@ -30,17 +30,17 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
         return grid.CalculateDistance(orig,dest);
     }
 
-    public Tile GetElement(Vector2Int localCoordinates)
+    public ITile GetElement(Vector2Int localCoordinates)
     {
         return grid.GetElement(localCoordinates);
     }
 
-    public void SetElement(Vector2Int localCoordinates, Tile tile)
+    public void SetElement(Vector2Int localCoordinates, ITile tile)
     {
         grid.SetElement(localCoordinates, tile);
     }
 
-    public HashSet<Tile> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed)
+    public HashSet<ITile> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed)
     {
         return grid.GetNeighbours(orig,distance,diagonalAllowed);
     }
@@ -48,7 +48,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
     //Mockup for Unity Message
     private void Start()
     {
-        grid = new SquareGrid<Tile>(Width,Height);
+        grid = new SquareGrid<ITile>(Width,Height);
     }
 
     public void CreateGrid()
@@ -58,7 +58,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
             for(int y=0; y < Height; y++)
             {
                 Vector2Int localCoords = new Vector2Int(x,y);
-                Tile newTile = CreateTile(localCoords);
+                ITile newTile = CreateTile(localCoords);
                 newTile.Initialize(localCoords);
                 grid.SetElement(localCoords, newTile);
             }
@@ -66,7 +66,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
     }
 
     //The following methods can delegate to GridComponent
-    public Tile CreateTile(Vector2Int localCoord)
+    public ITile CreateTile(Vector2Int localCoord)
     {
         Tile newTile;
         //TO DO: Simplify the code if this become a architecture constraint -> See CreateTileSimple
@@ -74,20 +74,23 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
         // {
         //     GameObject newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform);
         //     newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
-        //     if (newChild.TryGetComponent<Tile>(out newTile) == false)
+        //     if (newChild.TryGetComponent<ITile>(out newTile) == false)
         //     {
         //         Debug.LogError("Error getting Tile component. Make sure tilePrefab includes Tile component.");
         //     }
         // }
         // else
         // {
-            newTile = new Tile();
+
+        //A factory will be required to separete entities (GridComponent) from User Case layer (Tile) -> Althoug maybe GridComponent could belong to use case layer replacing the factory
+            newTile = new Tile(); 
+            
         // }
         
         return newTile;
     }
 
-    public Tile CreateTileSimple(Vector2Int localCoord)
+    public ITile CreateTileSimple(Vector2Int localCoord)
     {
         // GameObject newChild;
         // newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform)

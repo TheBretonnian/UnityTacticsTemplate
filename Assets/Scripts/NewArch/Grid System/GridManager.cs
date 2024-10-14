@@ -5,9 +5,9 @@ using UnityEngine;
 public class GridManager  : MonoBehaviour
 {
     //Reference to the grid component: it can be set in Editor or on Awake with GetComponent
-    private IGrid<Tile> grid; 
+    private IGrid<ITile> grid; 
 
-    private GridAdapter<Tile> gridAdapter;
+    private GridAdapter<ITile> gridAdapter;
 
     //Consider to use a interface in case the Pathfinding becomes a component and for better decoupling
     private Pathfinding pathfinding;
@@ -24,20 +24,19 @@ public class GridManager  : MonoBehaviour
     void Awake()
     {
         //Get reference of grid
-        //For demo: create a instance of SquareGrid, TO DO replace with getting reference if null
-        grid = new SquareGrid<Tile>(width,height); //This is normally done in GridComponent
-
+        //For demo: create a instance of SquareGrid component, TO DO replace with proper dependency injection
+        grid = new SquareGridComponent();
         //Wrap the concrete SquareGrid into an adapter which implements the interface expected by Pathfinding => TypeSafe
-        gridAdapter = new GridAdapter<Tile>(grid);
+        gridAdapter = new GridAdapter<ITile>(grid);
 
-        //Consistency check
-        if(typeof(IPathfindingNode).IsAssignableFrom(typeof(Tile)))
+        //Consistency check: actually redundant if ITile derives from IPathfinding, but only run max. once per scene.
+        if(typeof(IPathfindingNode).IsAssignableFrom(typeof(ITile)))
         {
             pathfinding = new Pathfinding(gridAdapter, diagonalAllowed);
         }
         else
         {
-            //Debug.LogError("Tile does not implement IPathfindingNode");
+            //Debug.LogError("ITile does not implement IPathfindingNode");
         }        
     }
 

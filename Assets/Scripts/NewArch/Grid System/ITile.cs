@@ -1,7 +1,7 @@
 using UnityEngine;
 
-public interface ITile
+public interface ITile : IBasicGridElement, IPathfindingNode 
 {
-    Vector2Int LocalCoordinates{ get; }
     IUnit Unit {get; set;}
+    void Initialize(Vector2Int localCoordinates);
 }
