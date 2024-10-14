@@ -13,6 +13,9 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
     private int _height;
     private int _width;
 
+    //So this component can be used stand-alone without a GridManager
+    private GameObject tilePrefab; 
+
     private SquareGrid<Tile> grid;
 
     //Properties
@@ -47,4 +50,51 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
     {
         grid = new SquareGrid<Tile>(Width,Height);
     }
+
+    public void CreateGrid()
+    {
+        for(int x=0; x < Width; x++)
+        {
+            for(int y=0; y < Height; y++)
+            {
+                Vector2Int localCoords = new Vector2Int(x,y);
+                Tile newTile = CreateTile(localCoords);
+                newTile.Initialize(localCoords);
+                grid.SetElement(localCoords, newTile);
+            }
+        }
+    }
+
+    //The following methods can delegate to GridComponent
+    public Tile CreateTile(Vector2Int localCoord)
+    {
+        Tile newTile;
+        //TO DO: Simplify the code if this become a architecture constraint -> See CreateTileSimple
+        // if(typeof(MonoBehaviour).IsAssignableFrom(typeof(Tile)))
+        // {
+        //     GameObject newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform);
+        //     newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
+        //     if (newChild.TryGetComponent<Tile>(out newTile) == false)
+        //     {
+        //         Debug.LogError("Error getting Tile component. Make sure tilePrefab includes Tile component.");
+        //     }
+        // }
+        // else
+        // {
+            newTile = new Tile();
+        // }
+        
+        return newTile;
+    }
+
+    public Tile CreateTileSimple(Vector2Int localCoord)
+    {
+        // GameObject newChild;
+        // newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform)
+        // newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
+        // return newChild.GetComponent<Tile>();
+
+        return new Tile();//Stub code
+    }
+
 }
