@@ -24,4 +24,8 @@ public class Unit : MonoBehaviour, IUnit, ISelectable, ITarget{
 
 	}
 
+    public IAbility GetDefaultAbility()
+    {
+        throw new NotImplementedException();
+    }
 }//end Unit
