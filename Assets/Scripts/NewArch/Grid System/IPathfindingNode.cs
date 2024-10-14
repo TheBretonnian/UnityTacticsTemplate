@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public interface IPathfindingNode
 {
     public Vector2Int LocalCoordinates{ get; }

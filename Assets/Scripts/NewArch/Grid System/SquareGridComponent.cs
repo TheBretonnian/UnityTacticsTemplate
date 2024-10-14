@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 //As MonoBehaviour you can add this component to your Grid Object to decide
 // whether it is a square grid or hex grid. The game designer can decide directly in Unity Editor.

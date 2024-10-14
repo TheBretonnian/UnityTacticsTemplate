@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Threading;
+using UnityEngine;
 
 public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode 
 {

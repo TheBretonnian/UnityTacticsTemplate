@@ -10,10 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using UnityEngine;
 
 
 
-public class Unit : IUnit, ISelectable, ITarget, MonoBehaviour {
+public class Unit : MonoBehaviour, IUnit, ISelectable, ITarget{
 
 	public Unit(){
 
