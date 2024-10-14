@@ -9,6 +9,9 @@ public interface IGrid<T>
 
     // Methods
     T GetElement(Vector2Int localCoordinates);
+
+    void SetElement(Vector2Int localCoordinates, T element);
+    
     float CalculateDistance(Vector2Int orig, Vector2Int dest);
     public HashSet<T> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed);
 }

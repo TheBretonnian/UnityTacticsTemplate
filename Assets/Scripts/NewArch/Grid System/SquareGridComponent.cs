@@ -32,6 +32,11 @@ public class SquareGridComponent : MonoBehaviour, IGrid<Tile>
         return grid.GetElement(localCoordinates);
     }
 
+    public void SetElement(Vector2Int localCoordinates, Tile tile)
+    {
+        grid.SetElement(localCoordinates, tile);
+    }
+
     public HashSet<Tile> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed)
     {
         return grid.GetNeighbours(orig,distance,diagonalAllowed);
