@@ -18,7 +18,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
 
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
-    private SquareGrid<ITile> grid; //This can be converted to SquareGrid in case this class goes into User Case layer
+    private SquareGrid<ITile> grid; //This can be converted to SquareGrid<Tile> in case this class goes into User Case layer
     
 
     //Properties
@@ -121,7 +121,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
         // GameObject newChild;
         // newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform)
         // newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
-        // return newChild.GetComponent<Tile>();
+        // return newChild.GetComponent<ITile>();
 
         return new Tile();//Stub code
     }
