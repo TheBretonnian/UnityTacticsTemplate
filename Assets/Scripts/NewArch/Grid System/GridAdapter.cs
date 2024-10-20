@@ -10,9 +10,9 @@ public class GridAdapter<T> : IGrid<IPathfindingNode>
         _grid = grid;
     }
 
-    public int Height {get => _grid.Height;}
-
     public int Width {get => _grid.Width;}
+    public int Height {get => _grid.Height;}
+    public int CellSize {get => _grid.CellSize;}
 
     public float CalculateDistance(Vector2Int orig, Vector2Int dest)
     {
@@ -40,5 +40,25 @@ public class GridAdapter<T> : IGrid<IPathfindingNode>
             neighbours.Add((IPathfindingNode)element);
         }
         return neighbours;
+    }
+
+    public bool AreValidCoordinates(Vector2Int localCoordinates)
+    {
+        return _grid.AreValidCoordinates(localCoordinates);
+    }
+
+    public Vector3 LocalToCellWorld(Vector2Int localCoordinates)
+    {
+        return _grid.LocalToCellWorld(localCoordinates);
+    }
+
+    public Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates)
+    {
+        return _grid.LocalToCellCenterWorld(localCoordinates);
+    }
+
+    public Vector2Int WorldToLocal(Vector3 worldPosition)
+    {
+        return _grid.WorldToLocal(worldPosition);
     }
 }

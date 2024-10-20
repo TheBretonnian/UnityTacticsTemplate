@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks.Dataflow;
 using UnityEngine;
 
 //As MonoBehaviour you can add this component to your Grid Object to decide
@@ -12,15 +14,17 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
     //Fields
     private int _height;
     private int _width;
+    private int _cellSite;
 
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
-
     private SquareGrid<ITile> grid; //This can be converted to SquareGrid in case this class goes into User Case layer
+    
 
     //Properties
-    public int Height {get => _height;}
     public int Width {get => _width;}
+    public int Height {get => _height;}
+    public int CellSize {get => _cellSite;}
 
 
     //Public methods
@@ -45,10 +49,32 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
         return grid.GetNeighbours(orig,distance,diagonalAllowed);
     }
 
+    public bool AreValidCoordinates(Vector2Int localCoordinates)
+    {
+        return grid.AreValidCoordinates(localCoordinates);
+    }
+
+    public Vector3 LocalToCellWorld(Vector2Int localCoordinates)
+    {
+        return grid.LocalToCellWorld(localCoordinates);
+    }
+
+    public Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates)
+    {
+        return grid.LocalToCellCenterWorld(localCoordinates);
+    }
+
+    public Vector2Int WorldToLocal(Vector3 worldPosition)
+    {
+        return grid.WorldToLocal(worldPosition);
+    }
+
     //Mockup for Unity Message
     private void Start()
     {
-        grid = new SquareGrid<ITile>(Width,Height);
+        Vector3 origin = new Vector3(0.0f,0.0f,0.0f);
+        //origin = transform.position;
+        grid = new SquareGrid<ITile>(Width,Height,CellSize,origin);
     }
 
     public void CreateGrid()
@@ -99,5 +125,4 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
 
         return new Tile();//Stub code
     }
-
 }

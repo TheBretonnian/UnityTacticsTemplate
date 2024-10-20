@@ -9,10 +9,18 @@ namespace UnityEngine
 
     public class GameObject{}
 
-    public class Vector3{
+    public class Vector3
+    {
         public float x;
         public float y;
         public float z;
+
+        public Vector3(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     }
 
     public class Vector2{
@@ -30,6 +38,12 @@ namespace UnityEngine
         }
 
         public static float Distance(Vector2Int orig, Vector2Int dest){ return 0.0f;}
+    }
+
+    public class Mathf{
+        public static int FloorToInt(float f){
+            return 0;
+        }
     }   
 
     public class Camera{
