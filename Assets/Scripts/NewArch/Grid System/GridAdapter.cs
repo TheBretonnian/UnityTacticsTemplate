@@ -13,6 +13,7 @@ public class GridAdapter<T> : IGrid<IPathfindingNode>
     public int Width {get => _grid.Width;}
     public int Height {get => _grid.Height;}
     public int CellSize {get => _grid.CellSize;}
+    public bool IsInitialized {get => _grid.IsInitialized;}
 
     public float CalculateDistance(Vector2Int orig, Vector2Int dest)
     {

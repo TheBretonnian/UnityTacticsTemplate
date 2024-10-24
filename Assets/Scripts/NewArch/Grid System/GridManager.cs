@@ -19,6 +19,8 @@ public class GridManager  : MonoBehaviour
     private int height;
     private bool diagonalAllowed;
 
+    public Pathfinding Pathfinding{get => pathfinding;}
+
     //Unity Messages
     void Awake()
     {
@@ -36,7 +38,7 @@ public class GridManager  : MonoBehaviour
         else
         {
             Debug.LogError("ITile does not implement IPathfindingNode");
-        }        
+        }
     }
 
     //Public methods

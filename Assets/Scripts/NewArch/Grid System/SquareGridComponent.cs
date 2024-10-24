@@ -25,6 +25,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
     public int Width {get => _width;}
     public int Height {get => _height;}
     public int CellSize {get => _cellSite;}
+    public bool IsInitialized {get => grid.IsInitialized;}
 
 
     //Public methods
@@ -89,6 +90,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
                 grid.SetElement(localCoords, newTile);
             }
         }
+        grid.SetInitialized();
     }
 
     //The following methods can delegate to GridComponent
@@ -108,8 +110,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
         else
         {
             //A factory will be required to separete entities (GridComponent) from User Case layer (Tile) -> Althoug maybe GridComponent could belong to use case layer replacing the factory
-            newTile = new Tile(); 
-            
+            newTile = new Tile();             
         }
         
         return newTile;

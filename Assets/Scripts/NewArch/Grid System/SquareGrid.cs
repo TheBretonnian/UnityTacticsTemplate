@@ -10,12 +10,14 @@ public class SquareGrid<T> : IGrid<T>
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int CellSize { get; private set; }
+    public bool IsInitialized {get; private set;}
 
     public SquareGrid(int width, int height, int cellSize, Vector3 origin)
     {
         Width = width;
         Height = height;
         CellSize = cellSize;
+        IsInitialized = false;
         _origin = origin;
         grid = new T[width, height];
     }
@@ -85,5 +87,10 @@ public class SquareGrid<T> : IGrid<T>
         return new Vector2Int(
             Mathf.FloorToInt(worldPosition.x - _origin.x),
             Mathf.FloorToInt(worldPosition.y - _origin.y));
+    }
+
+    public void SetInitialized()
+    {
+        this.IsInitialized = true;
     }
 }

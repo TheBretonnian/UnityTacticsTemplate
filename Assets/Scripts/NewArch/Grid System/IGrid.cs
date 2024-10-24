@@ -8,6 +8,8 @@ public interface IGrid<T>
     int Height { get; }
     int CellSize { get; }
 
+    bool IsInitialized {get;}
+
     // Methods
     T GetElement(Vector2Int localCoordinates);
 
