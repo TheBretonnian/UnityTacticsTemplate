@@ -14,6 +14,8 @@ using System.IO;
 
 
 public interface IUnit  {
+
+    public int TeamNumber{get; set;}
     public IAbility GetDefaultAbility();
 
 }//end IUnit
