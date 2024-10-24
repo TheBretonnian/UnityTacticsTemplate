@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -36,7 +35,7 @@ public class GridManager  : MonoBehaviour
         }
         else
         {
-            //Debug.LogError("ITile does not implement IPathfindingNode");
+            Debug.LogError("ITile does not implement IPathfindingNode");
         }        
     }
 

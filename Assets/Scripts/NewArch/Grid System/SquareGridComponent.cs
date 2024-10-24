@@ -94,35 +94,32 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
     //The following methods can delegate to GridComponent
     public ITile CreateTile(Vector2Int localCoord)
     {
-        Tile newTile;
+        ITile newTile;
         //TO DO: Simplify the code if this become a architecture constraint -> See CreateTileSimple
-        // if(typeof(MonoBehaviour).IsAssignableFrom(typeof(Tile)))
-        // {
-        //     GameObject newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform);
-        //     newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
-        //     if (newChild.TryGetComponent<ITile>(out newTile) == false)
-        //     {
-        //         Debug.LogError("Error getting Tile component. Make sure tilePrefab includes Tile component.");
-        //     }
-        // }
-        // else
-        // {
-
-        //A factory will be required to separete entities (GridComponent) from User Case layer (Tile) -> Althoug maybe GridComponent could belong to use case layer replacing the factory
+        if(typeof(MonoBehaviour).IsAssignableFrom(typeof(Tile)))
+        {
+            GameObject newChild = Instantiate(tilePrefab, grid.LocalToCellCenterWorld(localCoord), Quaternion.identity, transform);
+            newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
+            if (newChild.TryGetComponent<ITile>(out newTile) == false)
+            {
+                Debug.LogError("Error getting Tile component. Make sure tilePrefab includes Tile component.");
+            }
+        }
+        else
+        {
+            //A factory will be required to separete entities (GridComponent) from User Case layer (Tile) -> Althoug maybe GridComponent could belong to use case layer replacing the factory
             newTile = new Tile(); 
             
-        // }
+        }
         
         return newTile;
     }
 
     public ITile CreateTileSimple(Vector2Int localCoord)
     {
-        // GameObject newChild;
-        // newChild = Instantiate(tilePrefab, grid.Local2WorldCenterPosition(localCoord), Quaternion.identity, transform)
-        // newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
-        // return newChild.GetComponent<ITile>();
-
-        return new Tile();//Stub code
+        GameObject newChild;
+        newChild = Instantiate(tilePrefab, grid.LocalToCellCenterWorld(localCoord), Quaternion.identity, transform);
+        newChild.name = $"{tilePrefab.name}_{localCoord.x}_{localCoord.y}";
+        return newChild.GetComponent<ITile>();
     }
 }
