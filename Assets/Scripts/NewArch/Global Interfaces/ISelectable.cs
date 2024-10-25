@@ -2,5 +2,8 @@
 //typically either a tile or a unit (preferred)
 public interface ISelectable  
 {
-
-}
+	void Selected();
+	void Deselected();
+	void OnHoverEnter();
+	void OnHoverExit();
+}//end ISelectable
