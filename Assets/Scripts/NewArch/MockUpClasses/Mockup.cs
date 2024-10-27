@@ -1,4 +1,4 @@
-namespace UnityEngine
+namespace UnityEngineMockup
 {
     public abstract class MonoBehaviour
     {

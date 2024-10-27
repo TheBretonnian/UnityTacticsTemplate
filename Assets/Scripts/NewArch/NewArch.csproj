@@ -11,21 +11,8 @@
     <ProjectGuid>{16D2461D-CD70-4497-95C4-A9EC306C86D1}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IAbility.cs" />
-    <Compile Include="IInputController.cs" />
-    <Compile Include="InputController.cs" />
-    <Compile Include="MouseController2DLegacy.cs" />
-    <Compile Include="MouseController3DCollider.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="PlayerController.cs" />
-    <Compile Include="ScriptableObjectGameEvents\AbilityGameEvent.cs" />
-    <Compile Include="ScriptableObjectGameEvents\GameEvent.cs" />
-    <Compile Include="ScriptableObjectGameEvents\GameEventUsageExample.cs" />
-    <Compile Include="ScriptableObjectGameEvents\IGameEvent.cs" />
-    <Compile Include="ScriptableObjectGameEvents\IntGameEvent.cs" />
-    <Compile Include="ScriptableObjectGameEvents\TurnData.cs" />
-    <Compile Include="ScriptableObjectGameEvents\TurnGameEvent.cs" />
-    <Compile Include="ScriptableObjectGameEvents\UnitGameEvent.cs" />
-    <Compile Include="UnitDataMap.cs" />
+    <Reference Include="UnityEngine">
+      <HintPath>C:\Users\Public\UnityLibrary\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
