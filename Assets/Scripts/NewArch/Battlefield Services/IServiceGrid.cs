@@ -8,14 +8,13 @@ public interface IServiceGrid
     Range GetRangeWithLoS(ITile origin, int distance);
 
     //Units
-
     HashSet<IUnit> GetUnitsInRange(Range tiles);
     HashSet<IUnit> GetUnitsInRange(ITile origin, int distance);
 
     HashSet<IUnit> GetEnemiesInSet(IUnit referenceUnit, HashSet<IUnit> units);
     HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units);
 
-    //Transformer
+    //Transformers
     ITile GetTileFromUnit(IUnit unit);
     IUnit GetUnitFromTile(ITile tile);
 
@@ -43,9 +42,9 @@ public interface IServiceGrid
     bool HasLos(ITile orig, ITile dest);
 
     //Services:
-    // + ServiceGrid
-    // + ServiceGridVisual
-    // + ServicePathfinding
-    // + ServiceLoSandCover
+    // + IServiceGrid
+    // + IServiceGridVisual
+    // + IServicePathfinding
+    // + IServiceLoSandCover
 
 }
