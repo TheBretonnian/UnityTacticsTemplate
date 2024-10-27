@@ -7,16 +7,14 @@
 ///////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using UnityEngine;
 
 
 
 public class Unit : MonoBehaviour, IUnit, ISelectable, ITarget{
+    private int teamNumber;
 
-	public Unit(){
+    public Unit(){
 
 	}
 
@@ -24,7 +22,26 @@ public class Unit : MonoBehaviour, IUnit, ISelectable, ITarget{
 
 	}
 
+    public int TeamNumber { get => teamNumber; set => teamNumber = value; }
+
     public IAbility GetDefaultAbility()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Selected()
+    {
+        throw new NotImplementedException();
+    }
+    public void Deselected()
+    {
+        throw new NotImplementedException();
+    }
+    public void OnHoverEnter()
+    {
+        throw new NotImplementedException();
+    }
+    public void OnHoverExit()
     {
         throw new NotImplementedException();
     }

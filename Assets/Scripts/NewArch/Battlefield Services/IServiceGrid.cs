@@ -5,20 +5,10 @@ public interface IServiceGrid
 {
     Range GetRange(ITile origin, int distance);
 
-    //Units
-    HashSet<IUnit> GetUnitsInRange(Range tiles);
-    HashSet<IUnit> GetUnitsInRange(ITile origin, int distance);
-
-    HashSet<IUnit> GetEnemiesInSet(IUnit referenceUnit, HashSet<IUnit> units);
-    HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units);
-
-    //Transformers
-    ITile GetTileFromUnit(IUnit unit);
-    IUnit GetUnitFromTile(ITile tile);
+    //Locators
+    ITile GetTileFromWorldPosition(Vector3 worldPosition);
 
     //Line methods
-    int GetDistance(ITile orig, ITile dest);
-    int GetDistance(IUnit fromUnit, IUnit toUnit);
+    float GetDistance(ITile orig, ITile dest);
     Range GetLineOfTiles(ITile orig, ITile dest);
-
 }

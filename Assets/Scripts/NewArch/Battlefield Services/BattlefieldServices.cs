@@ -1,59 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattlefieldServices : IServiceGrid, IServicePathfinding, IServiceLoSandCover, IServiceGridVisual
-{
-    public BattlefieldServices()
-    {
-    }
-    //Basic Service
-    public Range GetRange(ITile origin, int distance)
-    {
-        throw new System.NotImplementedException();
-    }
-    //Unit related methods
-    public HashSet<IUnit> GetUnitsInRange(Range tiles)
-    {
-        throw new System.NotImplementedException();
-    }
 
-    public HashSet<IUnit> GetUnitsInRange(ITile origin, int distance)
-    {
-        throw new System.NotImplementedException();
-    }
-    public HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units)
-    {
-        throw new System.NotImplementedException();
-    }
-    public HashSet<IUnit> GetEnemiesInSet(IUnit referenceUnit, HashSet<IUnit> units)
-    {
-        throw new System.NotImplementedException();
-    }
+//This can serve as single entry point for Battlefiled services.
+//This class may inherit from MonoBehaviour and become a component.
+//This class depends on tiny classes which implement each specific interface.
+public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServicePathfinding, IServiceLoSandCover, IServiceGridVisual
+{  
+    GridManager gridManager;
+    ServiceGrid serviceGrid;
+    ServiceUnitLocation serviceUnitLocation;
 
-    //Line methods
-    public int GetDistance(ITile orig, ITile dest)
+    public BattlefieldServices(GridManager gridManager)
     {
-        throw new System.NotImplementedException();
+        this.gridManager = gridManager;
+        serviceGrid = new ServiceGrid(gridManager);
+        serviceUnitLocation = new ServiceUnitLocation(gridManager);
     }
-
-    public int GetDistance(IUnit fromUnit, IUnit toUnit)
-    {
-        throw new System.NotImplementedException();
-    }
-    public Range GetLineOfTiles(ITile orig, ITile dest)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    //Transformers
-    public ITile GetTileFromUnit(IUnit unit)
-    {
-        throw new System.NotImplementedException();
-    }
-    public IUnit GetUnitFromTile(ITile tile)
-    {
-        throw new System.NotImplementedException();
-    }
+    
 
     //Pathfinding
     public Range GetRangeWalkable(ITile origin, int distance)
@@ -103,6 +67,63 @@ public class BattlefieldServices : IServiceGrid, IServicePathfinding, IServiceLo
     public int OutlineRange(Range range, Color color, int lineType = 0)
     {
         throw new System.NotImplementedException();
+    }
+
+    //ServiceGrid
+    public Range GetRange(ITile origin, int distance)
+    {
+        return serviceGrid.GetRange(origin,distance);
+    }
+
+    public ITile GetTileFromWorldPosition(Vector3 worldPosition)
+    {
+        return serviceGrid.GetTileFromWorldPosition(worldPosition);
+    }
+
+    public float GetDistance(ITile orig, ITile dest)
+    {
+        return serviceGrid.GetDistance(orig,dest);
+    }
+
+    public Range GetLineOfTiles(ITile orig, ITile dest)
+    {
+        return serviceGrid.GetLineOfTiles(orig,dest);
+    }
+
+    //ServiceUnitLocation
+    public ITile GetTileFromUnit(IUnit unit)
+    {
+        return serviceUnitLocation.GetTileFromUnit(unit);
+    }
+
+    public IUnit GetUnitFromTile(ITile tile)
+    {
+        return serviceUnitLocation.GetUnitFromTile(tile);
+    }
+
+    public float GetDistance(IUnit fromUnit, IUnit toUnit)
+    {
+        return serviceUnitLocation.GetDistance(fromUnit,toUnit);
+    }
+
+    public HashSet<IUnit> GetUnitsInRange(Range tiles)
+    {
+        return serviceUnitLocation.GetUnitsInRange(tiles);
+    }
+
+    public HashSet<IUnit> GetUnitsInRange(ITile origin, int distance)
+    {
+        return serviceUnitLocation.GetUnitsInRange(origin,distance);
+    }
+
+    public HashSet<IUnit> GetEnemiesInSet(IUnit referenceUnit, HashSet<IUnit> units)
+    {
+        return serviceUnitLocation.GetEnemiesInSet(referenceUnit,units);
+    }
+
+    public HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units)
+    {
+        return serviceUnitLocation.GetAlliesInSet(referenceUnit,units);
     }
 
     //Services:

@@ -20,6 +20,7 @@ public class GridManager  : MonoBehaviour
     private bool diagonalAllowed;
 
     public Pathfinding Pathfinding{get => pathfinding;}
+    public IGrid<ITile> Grid { get => grid;}
 
     //Unity Messages
     void Awake()
