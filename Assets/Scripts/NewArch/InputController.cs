@@ -22,6 +22,7 @@ public abstract class InputController : MonoBehaviour, IInputController
     protected Camera _mainCamera;
 
     //Protected abstract methods to be override and used only in derived classes
+    protected abstract Vector3 GetCursorPosition();
     protected abstract ISelectable GetSelectableUnderCursor(Vector3 cursorPosition);
     protected abstract bool IsMainButtonPressed();
     protected abstract bool IsSecundaryButtonPressed();
@@ -56,15 +57,15 @@ public abstract class InputController : MonoBehaviour, IInputController
         //Detect input events -> Abstract Input method and environment/2D/3D) from other scripts
         if (IsMainButtonPressed())
         {
-            ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
-            if(selectable != null)
+            ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
+            if (selectable != null)
             {
                 MainCursorButtonClicked?.Invoke(selectable);
             }
         }
         else if(IsSecundaryButtonPressed()) //Both left and right not allowed
         {
-            ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
+            ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
             //Allow invoking with null to implement logic with secondary cursor button click such as Cancel Ability
             SecondaryCursorButtonClicked?.Invoke(selectable);
         }
@@ -73,7 +74,7 @@ public abstract class InputController : MonoBehaviour, IInputController
 
     private void DetectHover()
     {
-        ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
+        ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
 
         if (selectable != null)
         {

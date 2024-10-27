@@ -9,12 +9,12 @@ public class MouseController2DLegacy : InputController
 {
     private IGrid<ITile> grid;
 
+    protected override Vector3 GetCursorPosition() => Input.mousePosition;
     protected override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
         ITile selectedTile = grid.GetElement(grid.WorldToLocal(GetMouseWorldPosition()));
         return selectedTile as ISelectable;
-    }
-	
+    }	
 	protected override bool IsMainButtonPressed() => Input.GetMouseButtonDown(0);
 	protected override bool IsSecundaryButtonPressed() => Input.GetMouseButtonDown(1);
 
