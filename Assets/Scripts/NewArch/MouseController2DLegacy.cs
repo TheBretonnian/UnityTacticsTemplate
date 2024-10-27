@@ -7,12 +7,12 @@ using UnityEngine;
 //This class depends on ISelectable interface
 public class MouseController2DLegacy : InputController
 {
+    private IGrid<ITile> grid;
+
     protected override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
     {
-        (void)cursorPosition; //Not used
-
-        GridElement selected_gridElement = gridSystem.GetGridElement(GetMouseWorldPosition());
-        return selected_gridElement as ISelectable;
+        ITile selectedTile = grid.GetElement(grid.WorldToLocal(GetMouseWorldPosition()));
+        return selectedTile as ISelectable;
     }
 	
 	protected override bool IsMainButtonPressed() => Input.GetMouseButtonDown(0);

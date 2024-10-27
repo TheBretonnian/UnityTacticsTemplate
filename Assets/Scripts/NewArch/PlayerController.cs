@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private IUnit _selectedUnit;
     private IUnit _activeUnit;
     private IAbility _selectedAbility;
+    //private IAbility _movementAbility;
     private ITarget _selectedTarget;
     private List<IUnit> _eligibleUnits;
   
@@ -19,7 +20,7 @@ public class PlayerController : MonoBehaviour
     public event Action<IAbility> AbilityDeselected;
 
 
-    private void Awake()
+    private void OnEnable()
     {
         //Implement here logic to adapt to desired style (parameter)
         //Subscribe to input controller events
@@ -27,8 +28,24 @@ public class PlayerController : MonoBehaviour
         {
             inputController.MainCursorButtonClicked+=OnlyUnitSelectionClickHandler;
             inputController.SecondaryCursorButtonClicked+=OnlyTargetSelectionClickHandler;
+            inputController.SelectableHoverEntered+=OnHoverEnter;
+            inputController.SelectableHoverExit+=OnHoverExit;
         }
     }
+
+    private void OnDisable()
+    {
+        //Unsubscribe to input controller events
+        if(inputController!=null)
+        {
+            inputController.MainCursorButtonClicked-=OnlyUnitSelectionClickHandler;
+            inputController.SecondaryCursorButtonClicked-=OnlyTargetSelectionClickHandler;
+            inputController.SelectableHoverEntered-=OnHoverEnter;
+            inputController.SelectableHoverExit-=OnHoverExit;
+        }      
+    }
+
+    
 
     private void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
     {
@@ -40,11 +57,11 @@ public class PlayerController : MonoBehaviour
         if (selectedElement != null)
         {
             ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(_activeUnit, target))
+            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(target))
             {
                 SetTarget(target);
                 OnAbilityCommanded();
-                _selectedAbility.Command(_activeUnit, target, OnAbilityExecuted);
+                _selectedAbility.Command(target, OnAbilityExecuted);
             }
         }
     }
@@ -55,11 +72,11 @@ public class PlayerController : MonoBehaviour
         if (selectedElement != null)
         {
             ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(_activeUnit, target))
+            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(target))
             {
                 SetTarget(target);
                 OnAbilityCommanded();
-                _selectedAbility.Command(_activeUnit, target, OnAbilityExecuted);
+                _selectedAbility.Command(target, OnAbilityExecuted);
             }
             else
             {
@@ -80,6 +97,26 @@ public class PlayerController : MonoBehaviour
         // Implement secondary click logic if needed (for example ability cancellation)
     }
 
+    private void OnHoverEnter(ISelectable hoveredElement)
+    {
+        if (hoveredElement != null) //This checks is redundant since is already check in lower layer but add robustness
+        {
+            ITarget target = hoveredElement as ITarget;
+            _selectedAbility?.OnTargetHoverEnter(target);
+            //_movementAbility?.OnTargetHoverEnter(target);
+        }
+    }
+
+    private void OnHoverExit(ISelectable hoveredElement)
+    {
+        if (hoveredElement != null) //This checks is redundant since is already check in lower layer but add robustness
+        {
+            ITarget target = hoveredElement as ITarget;
+            _selectedAbility?.OnTargetHoverExit(target);
+            //_movementAbility?.OnTargetHoverExit(target);
+        }
+    }
+
     //Shall be possibe to access it from outside (e.g. GUI Controller)
     public void SelectAbility(IAbility ability)
     {
@@ -88,6 +125,7 @@ public class PlayerController : MonoBehaviour
             if(_selectedAbility != null)
             {
                 AbilityDeselected?.Invoke(_selectedAbility);
+                _selectedAbility.CleanUp(); //Notify ability directly -> no need of intermediate
             }
 
             _selectedAbility = ability;
@@ -95,11 +133,12 @@ public class PlayerController : MonoBehaviour
             if(_selectedAbility != null)
             {
                 AbilitySelected?.Invoke(_selectedAbility);
+                _selectedAbility.Selected(); //Notify ability directly -> no need of intermediate
             }
             //Autolaunch if selected from GUI, should not be the case from default ability
             if ((_selectedAbility?.IsAutoTarget() == true) && _selectedUnit == _activeUnit)
             {
-                _selectedAbility.Command(_activeUnit, null, OnAbilityExecuted);
+                _selectedAbility.Command(null, OnAbilityExecuted);
             }
         }
 
@@ -155,12 +194,14 @@ public class PlayerController : MonoBehaviour
             if(_selectedUnit != null)
              {
                 UnitDeselected?.Invoke(_selectedUnit);
+                _selectedUnit.Deselected();
              } 
             _selectedUnit = unit;
 
             if (_selectedUnit != null)
             {
                 UnitSelected?.Invoke(_selectedUnit);
+                _selectedUnit.Selected();
 
                 IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
                 SelectAbility(defaultAbility);
@@ -226,10 +267,12 @@ public class PlayerController : MonoBehaviour
     private void DeactivatePlayerInput()
     {
         inputController.DisableInput();
+        //enabled = false;
     }
 
     private void ActivatePlayerInput()
     {
         inputController.EnableInput();
+        //enabled = true;
     }
 }

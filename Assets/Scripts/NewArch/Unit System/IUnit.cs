@@ -13,7 +13,8 @@ using System.IO;
 
 
 
-public interface IUnit  {
+public interface IUnit  : ISelectable, ITarget
+{
 
     public int TeamNumber{get; set;}
     public IAbility GetDefaultAbility();

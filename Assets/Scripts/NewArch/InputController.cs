@@ -59,14 +59,14 @@ public abstract class InputController : MonoBehaviour, IInputController
             ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
             if(selectable != null)
             {
-                MainCursorButtonClicked?.Invoke(selectable)
+                MainCursorButtonClicked?.Invoke(selectable);
             }
         }
         else if(IsSecundaryButtonPressed()) //Both left and right not allowed
         {
             ISelectable selectable = GetSelectableUnderCursor(Input.mousePosition);
             //Allow invoking with null to implement logic with secondary cursor button click such as Cancel Ability
-            SecondaryCursorButtonClicked?.Invoke(selectable)
+            SecondaryCursorButtonClicked?.Invoke(selectable);
         }
 
     }
@@ -79,13 +79,10 @@ public abstract class InputController : MonoBehaviour, IInputController
         {
             if (_currentHoverObject != selectable)
             {
-                if (_currentHoverObject != null)
-                {
-                    _currentHoverObject.OnMouseExit();
-                }
+                _currentHoverObject?.OnHoverExit();
 
                 _currentHoverObject = selectable;
-                _currentHoverObject.OnMouseEnter();
+                _currentHoverObject.OnHoverEnter();
                 SelectableHoverEntered?.Invoke(_currentHoverObject);
             }
         }
@@ -93,7 +90,7 @@ public abstract class InputController : MonoBehaviour, IInputController
         {
             if (_currentHoverObject != null)
             {
-                _currentHoverObject.OnMouseExit();
+                _currentHoverObject.OnHoverExit();
                 SelectableHoverExit?.Invoke(_currentHoverObject);
                 _currentHoverObject = null;
                 
