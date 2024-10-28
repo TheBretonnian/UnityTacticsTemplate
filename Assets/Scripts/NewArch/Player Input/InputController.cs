@@ -17,6 +17,7 @@ public abstract class InputController : MonoBehaviour, IInputController
     
 
     //Protected members to be used by derived
+    protected ISelectable _currentSelectedObject;
     protected ISelectable _currentHoverObject;
     //Can be set to serializable to allow customization on Editor
     protected Camera _mainCamera;
@@ -50,15 +51,20 @@ public abstract class InputController : MonoBehaviour, IInputController
         DetectHover();
     }
 
-
-
     private void DetectClick()
     {
         //Detect input events -> Abstract Input method and environment/2D/3D) from other scripts
         if (IsMainButtonPressed())
         {
             ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
-            if (selectable != null)
+            //New object selected?
+            if(_currentSelectedObject != selectable) 
+            {
+                _currentSelectedObject?.Deselected();
+                _currentSelectedObject = selectable;
+                _currentSelectedObject?.Selected();
+            }
+            if (selectable != null) //Is this really needed here? To do: Check use cases in future
             {
                 MainCursorButtonClicked?.Invoke(selectable);
             }
@@ -76,25 +82,20 @@ public abstract class InputController : MonoBehaviour, IInputController
     {
         ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
 
-        if (selectable != null)
+        if(_currentHoverObject != selectable)
         {
-            if (_currentHoverObject != selectable)
-            {
-                _currentHoverObject?.OnHoverExit();
-
-                _currentHoverObject = selectable;
-                _currentHoverObject.OnHoverEnter();
-                SelectableHoverEntered?.Invoke(_currentHoverObject);
-            }
-        }
-        else
-        {
-            if (_currentHoverObject != null)
+            if(_currentHoverObject!=null)
             {
                 _currentHoverObject.OnHoverExit();
                 SelectableHoverExit?.Invoke(_currentHoverObject);
-                _currentHoverObject = null;
-                
+            }
+            
+            _currentHoverObject = selectable;
+
+            if(_currentHoverObject !=null)
+            {
+                _currentHoverObject.OnHoverEnter();
+                SelectableHoverEntered?.Invoke(_currentHoverObject);
             }
         }
     }   

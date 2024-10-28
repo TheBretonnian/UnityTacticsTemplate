@@ -14,9 +14,11 @@ public class PlayerController : MonoBehaviour
     private List<IUnit> _eligibleUnits;
   
     public event Action<IUnit> UnitSelected;
+    public event Action<IUnit> UnitActivated;
     public event Action<IAbility> AbilitySelected;
     //Events for cleaning up
     public event Action<IUnit> UnitDeselected;
+    public event Action<IUnit> UnitDeactivated;
     public event Action<IAbility> AbilityDeselected;
 
 
@@ -175,16 +177,8 @@ public class PlayerController : MonoBehaviour
     private void HandleSelection(ISelectable selectedElement)
     {
         //If selectedElement = null, unit will be also null without throwing an exception
-        IUnit unit = selectedElement as IUnit; 
-        if (unit != null)
-        {
-            SelectUnit(unit);
-        }
-        //Deselect unit if Player clicks on non unit (e.g. terrain)
-        else
-        {
-            SelectUnit(null);
-        }
+        IUnit unit = selectedElement as IUnit;
+        SelectUnit(unit); // being null if cast fails => Deselect unit
     }
 
     public void SelectUnit(IUnit unit)
@@ -192,17 +186,15 @@ public class PlayerController : MonoBehaviour
         if(_selectedUnit!= unit)
         {
             if(_selectedUnit != null)
-             {
+            {
                 UnitDeselected?.Invoke(_selectedUnit);
-                _selectedUnit.Deselected();
-             } 
+            }
+
             _selectedUnit = unit;
 
             if (_selectedUnit != null)
             {
                 UnitSelected?.Invoke(_selectedUnit);
-                _selectedUnit.Selected();
-
                 IAbility defaultAbility = _selectedUnit.GetDefaultAbility(); 
                 SelectAbility(defaultAbility);
             }
@@ -224,7 +216,21 @@ public class PlayerController : MonoBehaviour
 
     private void ActivateUnit(IUnit unit)
     {
-        _activeUnit = unit;
+        if(_activeUnit != unit)
+        {
+            if(_activeUnit != null)
+            {
+                UnitDeactivated?.Invoke(_activeUnit);
+            }
+
+            _activeUnit = unit;
+
+            if(_activeUnit != null)
+            {
+                UnitActivated?.Invoke(_activeUnit);
+            }           
+        }
+        
     }
 
     private void SelectFirstEligibleUnit()
