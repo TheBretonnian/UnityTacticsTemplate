@@ -69,8 +69,8 @@ public class GameManager : MonoBehaviour
         foreach (Unit unit in units)
         {
             gridSystem.GetGridElement(unit.transform.position).SetUnit(unit);
-            unit.onMoveCompleted += UpdateGridAfterMove;
-            unit.onAttackCompleted += UpdateGridAfterMove;
+            unit.onMoveCompleted += UpdateGridAfterAction;
+            unit.onAttackCompleted += UpdateGridAfterAction;
         }
 
         //Testing
@@ -211,7 +211,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Active Unit = {activeUnit}, currentPlayer = {currentPlayer}");
     }
 
-    public void UpdateGridAfterMove(Unit sender_unit)
+    public void UpdateGridAfterAction(Unit sender_unit)
     {
         //Update unit grid position
         GridElement gridElement = gridSystem.GetGridElement(sender_unit.GetPosition());

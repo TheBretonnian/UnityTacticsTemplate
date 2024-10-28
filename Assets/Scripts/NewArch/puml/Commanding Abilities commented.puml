@@ -1,0 +1,35 @@
+@startuml
+
+interface IUnit
+interface IAbility
+
+
+
+class Unit <<MonoBehaviour>>
+class MoveAbility <<ScriptableObject>>
+class MeleeAttackAbility <<ScriptableObject>>
+class PlayerController <<MonoBehaviour>>
+
+IUnit <|.. Unit
+IAbility <|.. MoveAbility
+IAbility <|.. MeleeAttackAbility
+
+Unit o-- IAbility : List
+MeleeAttackAbility ..> Unit
+note on link
+"Visitor pattern":
+reference of the unit
+via his Command API 
+from PlayerController
+endnote
+MoveAbility ..> Unit
+MeleeAttackAbility ..> MoveAbility
+note on link
+Move + Meele Attack
+endnote
+
+PlayerController ..> IAbility : Command(IUnit,ITarget)
+PlayerController ..> IUnit : selects
+
+
+@enduml

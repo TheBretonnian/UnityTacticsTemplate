@@ -1,0 +1,24 @@
+@startuml
+
+class PlayerController
+
+class Player
+
+interface ISelectable
+interface ITarget
+interface IUnit
+interface IAbility
+
+interface IInputController
+interface ITurnController
+
+PlayerController ..> Player
+PlayerController ..> IInputController
+PlayerController ..> ITurnController
+
+PlayerController ..> ISelectable
+PlayerController ..> ITarget
+PlayerController ..> IUnit
+PlayerController ..> IAbility
+
+@enduml

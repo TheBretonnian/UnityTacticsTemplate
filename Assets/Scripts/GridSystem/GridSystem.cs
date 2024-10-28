@@ -198,8 +198,8 @@ public class GridSystem : MonoBehaviour
                 {
                     tile.IsReachableOneMove = true;
                     tile.gridVisual.MarkAsReachableOneMove();
-                    //Use to fire event
-                    gameGrid.SetGridElement(tile.x, tile.y, tile);
+                    //Notify possible grid's subscriber
+                    gameGrid.TriggerGridChangedEvent(x,y);
                 }
 
             }
@@ -218,7 +218,8 @@ public class GridSystem : MonoBehaviour
                 {
                     tile.EnemyInRange = true;
                     tile.gridVisual.MarkAsEnemyInMeleeAttackRange();
-                    gameGrid.SetGridElement(tile.x, tile.y, tile);
+                    //Notify possible grid's subscriber
+                    gameGrid.TriggerGridChangedEvent(x,y);
                 }
 
             }
@@ -235,7 +236,8 @@ public class GridSystem : MonoBehaviour
             {
                 tile.DangerZone = true;
                 tile.gridVisual.MarkAsEnemyInMeleeAttackRange(); //TODO: Create proper method to differentiate between use cases
-                gameGrid.SetGridElement(tile.x, tile.y, tile);
+                //Notify possible grid's subscriber
+                gameGrid.TriggerGridChangedEvent(x,y);
             }
             
         }
@@ -248,6 +250,7 @@ public class GridSystem : MonoBehaviour
         {
             tile.gridVisual.SetTransparency(transparency);
         }
+        //BUT...if you want to do something like this in Editor, do it in Editor script...
     }
 
     #endregion

@@ -1,0 +1,43 @@
+@startuml
+
+interface ISelectable
+interface ITarget
+interface IAbility{
+    void Command(IUnit unit, ITarget target, Action onAbilityExecuted)
+}
+interface IUnit
+interface ITile
+
+ISelectable <|-- IUnit
+ITarget <|-- IUnit
+
+ISelectable <|-- ITile
+ITarget <|-- ITile
+
+
+class Unit <<MonoBehaviour>>
+class Tile <<MonoBehaviour>>
+class MoveAbility <<ScriptableObject>>
+class MeleeAttackAbility <<ScriptableObject>>
+class RangedAttackAbility <<MonoBehaviour>>
+class PlayerController <<MonoBehaviour>>
+
+'Interface Realizations
+IUnit <|.. Unit
+ITile <|.. Tile
+IAbility <|.. MoveAbility
+IAbility <|.. MeleeAttackAbility
+IAbility <|.. RangedAttackAbility
+
+'Agregation
+Unit o-- IAbility : List
+
+MeleeAttackAbility ..> Unit
+MeleeAttackAbility ..> MoveAbility
+
+
+PlayerController ..> IAbility : Command(IUnit,ITarget)
+PlayerController ..> ISelectable : selects
+
+
+@enduml

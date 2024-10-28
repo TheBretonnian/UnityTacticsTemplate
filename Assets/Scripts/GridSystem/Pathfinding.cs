@@ -29,11 +29,12 @@ public class Pathfinding
         //Check input parameter
         if (origin == null || goal == null)
         {
-            //Invalid coordenates
+            // Invalid coordinates
             return null;
         }
-        //Initialize pathfinding Grid for this search
-        for(int x=0; x<pathfindingGrid.Width; x++)
+
+        // Initialize pathfinding grid for this search
+        for (int x = 0; x < pathfindingGrid.Width; x++)
         {
             for(int y=0; y<pathfindingGrid.Height; y++)
             {

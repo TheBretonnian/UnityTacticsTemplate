@@ -1,0 +1,14 @@
+@startuml
+
+interface ISelectable
+interface ITarget
+interface IUnit
+interface ITile
+
+ISelectable <|-- IUnit
+ITarget <|-- IUnit
+
+ISelectable <|-- ITile
+ITarget <|-- ITile
+
+@enduml
