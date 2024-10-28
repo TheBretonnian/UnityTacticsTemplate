@@ -1,8 +1,6 @@
-using System.Drawing;
-using System.Threading;
 using UnityEngine;
 
-public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode 
+public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelectable, ITarget
 {
     //Private fields
     ITileVisual tileVisual;
@@ -58,4 +56,24 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode
     }
 
     public bool IsOccupied() => (Unit != null);
+
+    public void Selected()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deselected()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnHoverEnter()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnHoverExit()
+    {
+        throw new System.NotImplementedException();
+    }
 }

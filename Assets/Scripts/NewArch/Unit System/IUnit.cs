@@ -13,7 +13,7 @@ using System.IO;
 
 
 
-public interface IUnit  : ISelectable, ITarget
+public interface IUnit
 {
 
     public int TeamNumber{get; set;}

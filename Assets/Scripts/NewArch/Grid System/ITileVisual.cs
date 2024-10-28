@@ -1,4 +1,4 @@
-using System.Drawing; //Dummy reference for Color class
+using UnityEngine;
 
 public interface ITileVisual
 {
