@@ -11,7 +11,7 @@ using UnityEngine;
 
 
 
-public class Unit : MonoBehaviour, IUnit, ISelectable, ITarget{
+public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
     private int teamNumber;
 
     public Unit(){

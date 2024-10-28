@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelectable, ITarget
+public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelectableTarget
 {
     //Private fields
     ITileVisual tileVisual;
