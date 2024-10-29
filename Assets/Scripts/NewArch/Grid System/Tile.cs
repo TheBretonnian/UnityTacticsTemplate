@@ -18,6 +18,10 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public float GCost { get; set; }
     public float HCost { get; set; }
 
+    //Public Properties ITarget
+    public bool IsUnit{get => false;}
+    public IUnit GetUnit{get => Unit;}
+
     public void Initialize(Vector2Int localCoordinates)
     {
         LocalCoordinates = localCoordinates;

@@ -14,13 +14,8 @@ using UnityEngine;
 public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
     private int teamNumber;
 
-    public Unit(){
-
-	}
-
-	~Unit(){
-
-	}
+    public bool IsUnit{get => true;}
+    public IUnit GetUnit{get => this;}
 
     public int TeamNumber { get => teamNumber; set => teamNumber = value; }
 
