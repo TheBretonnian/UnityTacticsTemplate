@@ -176,9 +176,20 @@ public class PlayerController : MonoBehaviour
 
     private void HandleSelection(ISelectable selectedElement)
     {
-        //If selectedElement = null, unit will be also null without throwing an exception
-        IUnit unit = selectedElement as IUnit;
-        SelectUnit(unit); // being null if cast fails => Deselect unit
+        // //If selectedElement = null, unit will be also null without throwing an exception
+        // IUnit unit = selectedElement as IUnit;
+        // SelectUnit(unit); // being null if cast fails => Deselect unit
+
+        //Robuster approach:
+        if(selectedElement is ISelectableTarget selectableTarget)
+        {
+            SelectUnit(selectableTarget.GetUnit); //GetUnit will be null if a tile has no unit => Deselect unit
+        }
+        else
+        {
+            //if cast fails => Deselect unit
+            SelectUnit(null); //Can the cast really fail? Probably not, to do check this. This is just robustness code. Also the click can be ignore then
+        }
     }
 
     public void SelectUnit(IUnit unit)
