@@ -64,7 +64,21 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     {
         throw new System.NotImplementedException();
     }
+    public void ClearHighlightRange(Range range)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public int OutlineRange(Range range, Color color, int lineType = 0)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ClearOutline(int outlineId)
+    {
+        throw new System.NotImplementedException();
+    }
+    public void ClearAllOutlines()
     {
         throw new System.NotImplementedException();
     }
