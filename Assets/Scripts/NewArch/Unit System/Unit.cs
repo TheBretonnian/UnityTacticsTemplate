@@ -14,9 +14,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
     private int teamNumber;
 
-    public bool IsUnit{get => true;}
-    public IUnit GetUnit{get => this;}
-
+    //Public Methods IUnit
     public int TeamNumber { get => teamNumber; set => teamNumber = value; }
 
     public IAbility GetDefaultAbility()
@@ -24,6 +22,13 @@ public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
         throw new NotImplementedException();
     }
 
+    //ISelectableTarget:
+    //Public Properties ITarget
+    public bool IsUnit{get => true;}
+    public IUnit GetUnit{get => this;}
+
+
+    //Public Methods ISelectable
     public void Selected()
     {
         throw new NotImplementedException();
