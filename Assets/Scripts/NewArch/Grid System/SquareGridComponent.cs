@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks.Dataflow;
 using UnityEngine;
 
 //As MonoBehaviour you can add this component to your Grid Object to decide

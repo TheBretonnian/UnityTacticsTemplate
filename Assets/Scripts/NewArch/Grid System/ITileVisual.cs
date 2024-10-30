@@ -2,9 +2,9 @@ using UnityEngine;
 
 public interface ITileVisual
 {
-    public void Highlight(Color color);
+    void Highlight(Color color);
 
-    public void Outline(Color color);
+    void Outline(Color color);
 
-    public void Reset();
+    void Reset();
 }

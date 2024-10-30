@@ -3,13 +3,13 @@ using System;
 public interface IInputController
 {
     //Cursor press button events
-    public event Action<ISelectable> MainCursorButtonClicked;
-    public event Action<ISelectable> SecondaryCursorButtonClicked;
+    event Action<ISelectable> MainCursorButtonClicked;
+    event Action<ISelectable> SecondaryCursorButtonClicked;
     //Cursor hover events
-    public event Action<ISelectable> SelectableHoverEntered;
-    public event Action<ISelectable> SelectableHoverExit;
+    event Action<ISelectable> SelectableHoverEntered;
+    event Action<ISelectable> SelectableHoverExit;
     
     //Control methods
-    public void EnableInput();
-    public void DisableInput();
+    void EnableInput();
+    void DisableInput();
 }

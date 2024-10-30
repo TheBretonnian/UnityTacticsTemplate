@@ -17,14 +17,14 @@ public interface IGrid<T>
     
     float CalculateDistance(Vector2Int orig, Vector2Int dest);
 
-    public HashSet<T> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed);
+    HashSet<T> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed);
 
-    public bool AreValidCoordinates(Vector2Int localCoordinates);
+    bool AreValidCoordinates(Vector2Int localCoordinates);
 
-    public Vector3 LocalToCellWorld(Vector2Int localCoordinates);
+    Vector3 LocalToCellWorld(Vector2Int localCoordinates);
 
-    public Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates);
+    Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates);
 
-    public Vector2Int WorldToLocal(Vector3 worldPosition);
+    Vector2Int WorldToLocal(Vector3 worldPosition);
 
 }
