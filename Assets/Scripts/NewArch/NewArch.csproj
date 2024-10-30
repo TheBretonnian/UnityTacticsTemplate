@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -10,9 +10,62 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <ProjectGuid>{16D2461D-CD70-4497-95C4-A9EC306C86D1}</ProjectGuid>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>C:\Users\Public\UnityLibrary\UnityEngine.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abilities\IAbility.cs" />
+    <Compile Include="Abilities\IAbilityEvents.cs" />
+    <Compile Include="Basic Datatypes\Player.cs" />
+    <Compile Include="Basic Datatypes\Range.cs" />
+    <Compile Include="Basic Datatypes\TurnData.cs" />
+    <Compile Include="Battlefield Services\BattlefieldServices.cs" />
+    <Compile Include="Battlefield Services\IServiceGrid.cs" />
+    <Compile Include="Battlefield Services\IServiceGridVisual.cs" />
+    <Compile Include="Battlefield Services\IServiceLoSandCover.cs" />
+    <Compile Include="Battlefield Services\IServicePathfinding.cs" />
+    <Compile Include="Battlefield Services\IServiceUnitLocation.cs" />
+    <Compile Include="Battlefield Services\ServiceGrid.cs" />
+    <Compile Include="Battlefield Services\ServiceUnitLocation.cs" />
+    <Compile Include="Global Interfaces\ISelectable.cs" />
+    <Compile Include="Global Interfaces\ISelectableTarget.cs" />
+    <Compile Include="Global Interfaces\ITarget.cs" />
+    <Compile Include="Grid System\GridAdapter.cs" />
+    <Compile Include="Grid System\GridManager.cs" />
+    <Compile Include="Grid System\IBasicGridElement.cs" />
+    <Compile Include="Grid System\IGrid.cs" />
+    <Compile Include="Grid System\IPathfindingNode.cs" />
+    <Compile Include="Grid System\ITile.cs" />
+    <Compile Include="Grid System\ITileVisual.cs" />
+    <Compile Include="Grid System\Pathfinding.cs" />
+    <Compile Include="Grid System\SquareGrid.cs" />
+    <Compile Include="Grid System\SquareGridComponent.cs" />
+    <Compile Include="Grid System\Tile.cs" />
+    <Compile Include="Player Input\IInputController.cs" />
+    <Compile Include="Player Input\InputController.cs" />
+    <Compile Include="Player Input\MouseController2DLegacy.cs" />
+    <Compile Include="Player Input\MouseController3DCollider.cs" />
+    <Compile Include="Player Input\PlayerController.cs" />
+    <Compile Include="ScriptableObjectGameEvents\AbilityGameEvent.cs" />
+    <Compile Include="ScriptableObjectGameEvents\GameEvent.cs" />
+    <Compile Include="ScriptableObjectGameEvents\GameEventUsageExample.cs" />
+    <Compile Include="ScriptableObjectGameEvents\IGameEvent.cs" />
+    <Compile Include="ScriptableObjectGameEvents\IntGameEvent.cs" />
+    <Compile Include="ScriptableObjectGameEvents\TurnGameEvent.cs" />
+    <Compile Include="ScriptableObjectGameEvents\UnitGameEvent.cs" />
+    <Compile Include="Unit System\IUnit.cs" />
+    <Compile Include="Unit System\Unit.cs" />
+    <Compile Include="Unit System\UnitDataMap.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Turn System\" />
   </ItemGroup>
 </Project>
