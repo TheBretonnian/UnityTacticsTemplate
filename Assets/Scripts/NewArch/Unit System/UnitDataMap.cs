@@ -28,7 +28,7 @@ namespace UnitDataMapping
 
         public T GetData(IUnit unit)
         {
-            T data = default(T);
+            T data = default;
             if(dictionary.ContainsKey(unit) != true)
             {
                 data = dictionary[unit];

@@ -6,9 +6,9 @@ using UnityEngine;
 public class Player
 {
 
-    [SerializeField] private int teamNumber;
-    [SerializeField] private Color color;
-    [SerializeField] private bool isHuman;
+    [SerializeField] private readonly int teamNumber;
+    [SerializeField] private readonly Color color;
+    [SerializeField] private readonly bool isHuman;
 
     public int Number { get => teamNumber;}
     public Color GetColor { get => color;}

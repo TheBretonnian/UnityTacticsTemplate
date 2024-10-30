@@ -17,12 +17,12 @@ public class ScoreDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        scoreEvent.gameEvent += OnScoreChanged;
+        scoreEvent.GameEvent += OnScoreChanged;
     }
 
     private void OnDisable()
     {
-        scoreEvent.gameEvent -= OnScoreChanged;
+        scoreEvent.GameEvent -= OnScoreChanged;
     }
 
     private void OnScoreChanged(int newScore)

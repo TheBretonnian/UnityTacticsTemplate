@@ -12,9 +12,8 @@ public class MouseController3DCollider : InputController
     {
         ISelectable selectable = null; 
         Ray ray = _mainCamera.ScreenPointToRay(cursorPosition);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit))
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
             selectable = hit.collider.GetComponent<ISelectable>();
             //TO DO: Try parents of Game Object with collider too

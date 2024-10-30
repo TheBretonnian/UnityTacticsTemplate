@@ -155,7 +155,7 @@ public class Pathfinding
 
         foreach(IPathfindingNode node in path)
         {
-            //pathCoordenates.Add(pathfindingGrid.GetWorldCenterPosition(node.x, node.y));
+            pathCoordenates.Add(pathfindingGrid.LocalToCellCenterWorld(node.LocalCoordinates));
         }
 
         return pathCoordenates;
