@@ -46,7 +46,7 @@ public class SquareGrid<T> : IGrid<T>
 
     public HashSet<T> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed)
     {
-        List<T> neighbours = new List<T>();
+        HashSet<T> neighbours = new HashSet<T>();
         int[,] directions = diagonalAllowed ? 
             new int[,] { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} } : 
             new int[,] { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
@@ -60,7 +60,7 @@ public class SquareGrid<T> : IGrid<T>
             }
         }
 
-        return neighbours.ToHashSet();
+        return neighbours;
     }
 
     // Helper method to check if coordinates are within grid bounds (ValidCoordinates)
