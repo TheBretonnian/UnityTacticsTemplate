@@ -18,9 +18,11 @@ public interface IGrid<T>
     float CalculateDistance(Vector2Int orig, Vector2Int dest);
 
     HashSet<T> GetNeighbours(Vector2Int orig, int distance, bool diagonalAllowed);
-
+    
+    //Check that the coordinates are within Grid Boundary (0<= x < Width and 0 <= y < Height)
     bool AreValidCoordinates(Vector2Int localCoordinates);
 
+    //Transform bi-dimensional local space coordinates into a world Vector3 position (botton right corner of Cell)
     Vector3 LocalToCellWorld(Vector2Int localCoordinates);
 
     Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates);

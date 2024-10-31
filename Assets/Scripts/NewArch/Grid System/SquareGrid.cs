@@ -72,8 +72,7 @@ public class SquareGrid<T> : IGrid<T>
 
     public Vector3 LocalToCellWorld(Vector2Int localCoordinates)
     {
-        //return new Vector3((float)localCoordinates.x, (float)localCoordinates.y, 0.0f) * CellSize + _origin;
-        return new Vector3((float)localCoordinates.x, (float)localCoordinates.y, 0.0f); //Mockup since operator * does not work with mock up class
+        return new Vector3((float)localCoordinates.x, (float)localCoordinates.y, 0.0f) * CellSize + _origin;
     }
 
     public Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates)
