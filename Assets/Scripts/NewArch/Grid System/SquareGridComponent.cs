@@ -69,7 +69,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
     }
 
     //Mockup for Unity Message
-    private void Start()
+    void Start()
     {
         Vector3 origin = new Vector3(0.0f,0.0f,0.0f);
         //origin = transform.position;

@@ -37,13 +37,6 @@ public class SquareGridBorderOutline
         new Vector2Int(-1, 0)  // Left  
     };
 
-    private static readonly Vector2Int[,] corners = {
-        { new Vector2Int(0, 1), new Vector2Int(1, 1)}, // Up
-        { new Vector2Int(1, 1), new Vector2Int(0, 1)}, // Right
-        { new Vector2Int(0, 1), new Vector2Int(0, 0)}, // Down
-        { new Vector2Int(0, 0), new Vector2Int(0, 1)} // Left  
-    };
-
     //Dictionary ensures consistency with directions
     private static readonly Dictionary<Vector2Int, Vector2Int[]> direction2Corners = new Dictionary<Vector2Int, Vector2Int[]>
     {
@@ -51,14 +44,12 @@ public class SquareGridBorderOutline
         { new Vector2Int(1, 0),  new[] { new Vector2Int(1, 1), new Vector2Int(1, 0) } },  // Right
         { new Vector2Int(0, -1), new[] { new Vector2Int(1, 0), new Vector2Int(0, 0) } },  // Down
         { new Vector2Int(-1, 0), new[] { new Vector2Int(0, 0), new Vector2Int(0, 1) } }   // Left
-}   ;
+    };
 
     public SquareGridBorderOutline(LineRenderer lineRenderer, IGrid<ITile> grid)
     {
         this.lineRenderer = lineRenderer;
         this.grid = grid;
-        //List<Vector3> borderPoints = GetOrderedBorderPoints(squareGrid);
-        //CreateBorderLineRenderer(borderPoints);
     }
 
     public void OutlineBorderOfRange(HashSet<ITile> range)
