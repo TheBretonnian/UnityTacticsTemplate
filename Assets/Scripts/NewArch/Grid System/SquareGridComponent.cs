@@ -7,7 +7,7 @@ using UnityEngine;
 // without needing to know:
 // 1. the grid field
 // 2. the grid layout (geometry) : square / hex / others...
-public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
+public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
 {
     //Fields
     private int _height;
@@ -17,6 +17,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
     private SquareGrid<ITile> grid; //This can be converted to SquareGrid<Tile> in case this class goes into User Case layer
+    private SquareGridBorderOutline borderOutliner;
     
 
     //Properties
@@ -68,12 +69,18 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>
         return grid.WorldToLocal(worldPosition);
     }
 
-    //Mockup for Unity Message
+    public void OutlineBorderOfRange(Range range, LineRenderer lineRenderer)
+    {
+        borderOutliner.OutlineBorderOfRange(range,lineRenderer);
+    }
+
+    
     void Start()
     {
         Vector3 origin = new Vector3(0.0f,0.0f,0.0f);
         //origin = transform.position;
         grid = new SquareGrid<ITile>(Width,Height,CellSize,origin);
+        borderOutliner = new SquareGridBorderOutline(grid);
     }
 
     public void CreateGrid()

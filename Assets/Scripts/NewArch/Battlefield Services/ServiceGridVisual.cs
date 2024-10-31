@@ -3,18 +3,15 @@ using UnityEngine;
 
 public class ServiceGridVisual : IServiceGridVisual
 {
-
-    private readonly GridManager gridManager;
     private readonly ObjectPool<LineRenderer> lineRendererPool;
-    private readonly IBorderOutliner squareGridBorderOutline;
+    private readonly IBorderOutliner borderOutliner;
 
     private List<LineRenderer> activeLineRenderer = new List<LineRenderer>();
 
     public ServiceGridVisual(GridManager gridManager, LineRenderer lineRendererPrefab, Transform parent = null)
     {
-        this.gridManager = gridManager;
         lineRendererPool = new ObjectPool<LineRenderer>(lineRendererPrefab,3, parent);
-        squareGridBorderOutline = new SquareGridBorderOutline(gridManager.Grid); //TO DO: Square vs Hex? Wrong place to be concrete
+        borderOutliner = gridManager.BorderOutliner;
     }
 
     public void HighlightRange(Range range, Color color)
@@ -67,7 +64,7 @@ public class ServiceGridVisual : IServiceGridVisual
         newLineRenderer.startColor = newLineRenderer.endColor = color;
         //Apply logic for lineType
         //Populate it using a BorderOutliner
-        squareGridBorderOutline.OutlineBorderOfRange(range, newLineRenderer);
+        borderOutliner.OutlineBorderOfRange(range, newLineRenderer);
         //Add to the list of active lineRenderer
         activeLineRenderer.Add(newLineRenderer);
         return activeLineRenderer.Count - 1;

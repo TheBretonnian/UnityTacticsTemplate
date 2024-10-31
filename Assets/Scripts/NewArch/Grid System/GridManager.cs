@@ -1,11 +1,12 @@
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 public class GridManager  : MonoBehaviour
 {
     //Reference to the grid component: it can be set in Editor or on Awake with GetComponent
     private IGrid<ITile> grid; 
-
+    private IBorderOutliner borderOutliner;
     private GridAdapter<ITile> gridAdapter;
 
     //Consider to use a interface in case the Pathfinding becomes a component and for better decoupling
@@ -21,16 +22,24 @@ public class GridManager  : MonoBehaviour
 
     public Pathfinding Pathfinding{get => pathfinding;}
     public IGrid<ITile> Grid { get => grid;}
+    public IBorderOutliner BorderOutliner { get => borderOutliner;}
 
     //Unity Messages
     void Awake()
     {
-        //Get reference of grid
+        //Get reference of concrete shape component
         if(grid==null)
         {
             if(!TryGetComponent<IGrid<ITile>>(out grid))
             {
                 Debug.LogError("No Grid Component found");
+            }
+        }
+        if(borderOutliner==null)
+        {
+            if(!TryGetComponent<IBorderOutliner>(out borderOutliner))
+            {
+                Debug.LogError("No Border Outliner Component found");
             }
         }
         //Wrap the concrete SquareGrid into an adapter which implements the interface expected by Pathfinding => TypeSafe
