@@ -21,13 +21,9 @@ Notes:
 1. Continuous Outline: This approach ensures a continuous outline by following the border in order.
 2. Efficiency: Using a single LineRenderer reduces overhead and is better suited for dynamic or larger grids.
 3. Customizable: Adjust the LineRenderer properties (width, color, etc.) as needed for visual effect.
-
-HashSet<ITile> can be replaced by Range later
-
 */
-public class SquareGridBorderOutline
+public class SquareGridBorderOutline : IBorderOutliner
 {
-    private readonly LineRenderer lineRenderer;
     private readonly IGrid<ITile> grid;
 
     private static readonly Vector2Int[] directions = {
@@ -46,13 +42,12 @@ public class SquareGridBorderOutline
         { new Vector2Int(-1, 0), new[] { new Vector2Int(0, 0), new Vector2Int(0, 1) } }   // Left
     };
 
-    public SquareGridBorderOutline(LineRenderer lineRenderer, IGrid<ITile> grid)
+    public SquareGridBorderOutline(IGrid<ITile> grid)
     {
-        this.lineRenderer = lineRenderer;
         this.grid = grid;
     }
 
-    public void OutlineBorderOfRange(HashSet<ITile> range)
+    public void OutlineBorderOfRange(Range range, LineRenderer lineRenderer)
     {
         if(!FindOrigin(range, out Vector2Int origin))
         {
@@ -66,7 +61,7 @@ public class SquareGridBorderOutline
         DrawBorder(lineRenderer, sortedBorderPoints);
     }
 
-    private bool FindOrigin(HashSet<ITile> range, out Vector2Int origin)
+    private bool FindOrigin(Range range, out Vector2Int origin)
     {  
         for (int x = 0; x < grid.Width; x++)
         {
@@ -83,7 +78,7 @@ public class SquareGridBorderOutline
         return false;
     }
 
-    private HashSet<Vector2Int> GetBorderPoints(HashSet<ITile> range)
+    private HashSet<Vector2Int> GetBorderPoints(Range range)
     {
         HashSet<Vector2Int> unsortedBorderPoints = new HashSet<Vector2Int>();
 

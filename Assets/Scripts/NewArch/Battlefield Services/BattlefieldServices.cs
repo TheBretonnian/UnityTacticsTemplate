@@ -3,19 +3,23 @@ using UnityEngine;
 
 
 //This can serve as single entry point for Battlefiled services.
-//This class may inherit from MonoBehaviour and become a component.
+//This class may inherit from MonoBehaviour and be attach to GameObject
 //This class depends on tiny classes which implement each specific interface.
 public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServicePathfinding, IServiceLoSandCover, IServiceGridVisual
 {  
-    GridManager gridManager;
+    GridManager gridManager; //Assign with dependency injection: Editor or SceneManager
     ServiceGrid serviceGrid;
     ServiceUnitLocation serviceUnitLocation;
+    ServiceGridVisual serviceGridVisual;
+    LineRenderer lineRendererPrefab; //Assign it with dependency injection if class promote to MonoBehaviour
 
-    public BattlefieldServices(GridManager gridManager)
+    public BattlefieldServices(GridManager gridManager, LineRenderer lineRendererPrefab, Transform parent)
     {
         this.gridManager = gridManager;
+        this.lineRendererPrefab = lineRendererPrefab;
         serviceGrid = new ServiceGrid(gridManager);
         serviceUnitLocation = new ServiceUnitLocation(gridManager);
+        serviceGridVisual = new ServiceGridVisual(gridManager,lineRendererPrefab,parent);
     }
     
 
@@ -62,25 +66,25 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     //Grid Visuals
     public void HighlightRange(Range range, Color color)
     {
-        throw new System.NotImplementedException();
+       serviceGridVisual.HighlightRange(range, color);
     }
     public void ClearHighlightRange(Range range)
     {
-        throw new System.NotImplementedException();
+        serviceGridVisual.ClearHighlightRange(range);
     }
 
     public int OutlineRange(Range range, Color color, int lineType = 0)
     {
-        throw new System.NotImplementedException();
+        return serviceGridVisual.OutlineRange(range, color,lineType);
     }
 
     public void ClearOutline(int outlineId)
     {
-        throw new System.NotImplementedException();
+        serviceGridVisual.ClearOutline(outlineId);
     }
     public void ClearAllOutlines()
     {
-        throw new System.NotImplementedException();
+        serviceGridVisual.ClearAllOutlines();
     }
 
     //ServiceGrid
@@ -142,6 +146,7 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
 
     //Services:
     // + IServiceGrid
+    // + IServiceUnitLocation
     // + IServiceGridVisual
     // + IServicePathfinding
     // + IServiceLoSandCover
