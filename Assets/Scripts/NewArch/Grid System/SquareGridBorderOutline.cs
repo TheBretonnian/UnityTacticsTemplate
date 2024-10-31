@@ -1,143 +1,181 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 /*
 Explanation:
-1. Finding Border Tiles: The IsBorderTile method identifies any tile on the edge of the shape by 
-checking if any of its neighboring cells is empty.
-2. Creating an Ordered Outline: Starting from the first border tile, we follow a clockwise path around the edge, 
-identifying which directions form valid border edges. This ensures we create a continuous path.
-3. Adding Border Points: Each border edge point is added in sequence to form the outline. 
-The GetEdgePoint method adds offset points based on the direction, creating a clear, continuous border.
-4. Single LineRenderer Usage: Finally, the list of ordered points is passed to the LineRenderer, 
-drawing the entire border in one component.
+1. Finding the origin point: The origin point will be always the corner of the L tile with the lesser x and smaller y.
+2. Creating a unsorted SET of border points: The SET ensures each point (in Local coordinates) is added only once. 
+We loop through each tile in given Range to obtain the border points: we don't need to worry about any order yet, 
+just identify border points. They will be ordered later.
+3. Creating an Ordered Outline Sequence: Starting from the origin point, we follow a clockwise path around the edge, 
+identifying which directions form valid border edges. This ensures we create a continuous path. 
+We search for valid borders in the unsorted set obtained before and once found: 
+- we add to the ordered outline sequence (Set or List)
+- we removed from unsorted set (already used)
+4. Adding Border Points to the LineRenderer: Each border edge point is converted to World Space coordinates 
+and added in sequence to form the outline. This is about the external border, inner islands will be ommited.
+The list of ordered points is passed to the LineRenderer, drawing the entire border in one component. 
+(Using loop in lineRenderer will close the border Loop)
 
 Notes:
 1. Continuous Outline: This approach ensures a continuous outline by following the border in order.
 2. Efficiency: Using a single LineRenderer reduces overhead and is better suited for dynamic or larger grids.
 3. Customizable: Adjust the LineRenderer properties (width, color, etc.) as needed for visual effect.
 
+HashSet<ITile> can be replaced by Range later
+
 */
 public class SquareGridBorderOutline
 {
-    public int[,] squareGrid;
-    public LineRenderer lineRenderer;
-    
+    private readonly LineRenderer lineRenderer;
+    private readonly IGrid<ITile> grid;
+
     private static readonly Vector2Int[] directions = {
-        new Vector2Int(1, 0), // Right
+        new Vector2Int(0, 1),  // Up
+        new Vector2Int(1, 0),  // Right
         new Vector2Int(0, -1), // Down
-        new Vector2Int(-1, 0), // Left
-        new Vector2Int(0, 1)   // Up
+        new Vector2Int(-1, 0)  // Left  
     };
 
-    void Start()
-    {
-        squareGrid = new int[,]
-        {
-            { 0, 1, 1, 0 },
-            { 1, 1, 1, 0 },
-            { 0, 1, 0, 0 },
-            { 0, 0, 0, 0 }
-        };
+    private static readonly Vector2Int[,] corners = {
+        { new Vector2Int(0, 1), new Vector2Int(1, 1)}, // Up
+        { new Vector2Int(1, 1), new Vector2Int(0, 1)}, // Right
+        { new Vector2Int(0, 1), new Vector2Int(0, 0)}, // Down
+        { new Vector2Int(0, 0), new Vector2Int(0, 1)} // Left  
+    };
 
-        List<Vector3> borderPoints = GetOrderedBorderPoints(squareGrid);
-        CreateBorderLineRenderer(borderPoints);
+    //Dictionary ensures consistency with directions
+    private static readonly Dictionary<Vector2Int, Vector2Int[]> direction2Corners = new Dictionary<Vector2Int, Vector2Int[]>
+    {
+        { new Vector2Int(0, 1),  new[] { new Vector2Int(0, 1), new Vector2Int(1, 1) } },  // Up
+        { new Vector2Int(1, 0),  new[] { new Vector2Int(1, 1), new Vector2Int(1, 0) } },  // Right
+        { new Vector2Int(0, -1), new[] { new Vector2Int(1, 0), new Vector2Int(0, 0) } },  // Down
+        { new Vector2Int(-1, 0), new[] { new Vector2Int(0, 0), new Vector2Int(0, 1) } }   // Left
+}   ;
+
+    public SquareGridBorderOutline(LineRenderer lineRenderer, IGrid<ITile> grid)
+    {
+        this.lineRenderer = lineRenderer;
+        this.grid = grid;
+        //List<Vector3> borderPoints = GetOrderedBorderPoints(squareGrid);
+        //CreateBorderLineRenderer(borderPoints);
     }
 
-    List<Vector3> GetOrderedBorderPoints(int[,] grid)
+    public void OutlineBorderOfRange(HashSet<ITile> range)
     {
-        List<Vector3> borderPoints = new List<Vector3>();
-        int rows = grid.GetLength(0);
-        int cols = grid.GetLength(1);
-
-        // Find the starting border tile
-        bool startFound = false;
-        int startX = 0, startY = 0;
-
-        for (int x = 0; x < rows; x++)
+        if(!FindOrigin(range, out Vector2Int origin))
         {
-            for (int y = 0; y < cols; y++)
-            {
-                if (grid[x, y] == 1 && IsBorderTile(grid, x, y))
-                {
-                    startX = x;
-                    startY = y;
-                    startFound = true;
-                    break;
-                }
-            }
-            if (startFound) break;
+            return; //Origin could not be found
         }
 
-        // Follow the outline in a clockwise direction
-        Vector2Int current = new Vector2Int(startX, startY);
-        Vector2Int previousDirection = directions[3]; // Start by going "up" (to close the shape correctly)
+        HashSet<Vector2Int> unsortedBorderPoints = GetBorderPoints(range);
 
-        do
+        HashSet<Vector2Int> sortedBorderPoints = SortBorderPoints(origin, unsortedBorderPoints);
+
+        DrawBorder(lineRenderer, sortedBorderPoints);
+    }
+
+    private bool FindOrigin(HashSet<ITile> range, out Vector2Int origin)
+    {  
+        for (int x = 0; x < grid.Width; x++)
         {
-            // Check each direction for a border edge
-            for (int i = 0; i < directions.Length; i++)
+            for (int y = 0; y < grid.Height; y++)
             {
-                //cycle through the directions in a clockwise order, starting from the last direction (previousDirection)
-                Vector2Int direction = directions[(Array.IndexOf(directions, previousDirection) + i) % directions.Length];
-                Vector2Int neighbor = current + direction;
-
-                if (IsBorderEdge(grid, current.x, current.y, direction))
+                origin = new Vector2Int(x,y);
+                if(range.Contains(grid.GetElement(origin)))
                 {
-                    borderPoints.Add(GetEdgePoint(current.x, current.y, direction));
-
-                    // Move to the next tile in that direction
-                    current += direction;
-                    previousDirection = direction;
-                    break;
+                    return true;
                 }
             }
         }
-        while (current != new Vector2Int(startX, startY)); // Stop when back at the start
-
-        return borderPoints;
-    }
-
-    bool IsBorderTile(int[,] grid, int x, int y)
-    {
-        foreach (Vector2Int dir in directions)
-        {
-            int neighbour_x = x + dir.x;
-            int neighbour_y = y + dir.y;
-            if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= grid.GetLength(0) || neighbour_y >= grid.GetLength(1) || grid[neighbour_x, neighbour_y] == 0)
-            {
-                return true;
-            }
-        }
+        origin = new Vector2Int(0,0);
         return false;
     }
 
-    bool IsBorderEdge(int[,] grid, int x, int y, Vector2Int direction)
+    private HashSet<Vector2Int> GetBorderPoints(HashSet<ITile> range)
     {
-        int nx = x + direction.x;
-        int ny = y + direction.y;
-        return nx < 0 || ny < 0 || nx >= grid.GetLength(0) || ny >= grid.GetLength(1) || grid[nx, ny] == 0;
+        HashSet<Vector2Int> unsortedBorderPoints = new HashSet<Vector2Int>();
+
+        foreach(ITile tile in range)
+        {
+            //Loop through all directions
+            for (int i = 0; i < directions.Length; i++)
+            {
+                //Check if border: neighbour is outside grid Boundary or is not included in range
+                Vector2Int neighbourCoord = tile.LocalCoordinates + directions[i];
+                if(!grid.AreValidCoordinates(neighbourCoord) || !range.Contains(grid.GetElement(neighbourCoord)))
+                {
+                    //Border found. Add points of the edge:
+                    unsortedBorderPoints.Add(tile.LocalCoordinates + direction2Corners[directions[i]][0]);
+                    unsortedBorderPoints.Add(tile.LocalCoordinates + direction2Corners[directions[i]][1]);
+                }
+            }
+        }
+
+        return unsortedBorderPoints;
     }
 
-    bool IsBorderEdge(Vector2Int coords, Vector2Int direction, SquareGrid<ITile> grid, Range tiles)
+    private HashSet<Vector2Int> SortBorderPoints(Vector2Int origin, HashSet<Vector2Int> unsortedBorderPoints)
     {
-        Vector2Int neighbourCoord = coords + direction; //So simple it can be moved outside
-        //Check if neighbout is outside grid borders or not contain in given Range
-        return !grid.AreValidCoordinates(neighbourCoord) || !tiles.Contains(grid.GetElement(neighbourCoord));
+        HashSet<Vector2Int> sortedBorderPoints = new HashSet<Vector2Int>();
+
+        if(!unsortedBorderPoints.Contains(origin)) //Initial plausibility check
+        {
+            return sortedBorderPoints;
+        }
+        TransferPoint(origin, unsortedBorderPoints, sortedBorderPoints);
+
+        bool NoMorePointsFound = false;
+        Vector2Int currentPoint = origin;
+
+        while(!NoMorePointsFound)
+        {
+            //Search through all directions in clockwise direction
+            for (int i = 0; i < directions.Length; i++)
+            {
+                //Try to search next border point in unsorted set
+                Vector2Int nextPoint = currentPoint + directions[i];
+                if(unsortedBorderPoints.Contains(nextPoint))
+                {
+                    TransferPoint(nextPoint,unsortedBorderPoints,sortedBorderPoints);
+                    currentPoint = nextPoint;
+                    break; //Exit this search
+                }
+                else if((nextPoint == origin) || (unsortedBorderPoints.Count == 0))
+                {
+                    //We have reach the origin again so Or no more points
+                    NoMorePointsFound = true;
+                    break; //Exit this search
+                }
+            }
+            //If we cannot find any further point but the set of unsorted points is not empty 
+            //(e.g. invalid points like inner islands) we should stop the algorith as we cannot continue
+            NoMorePointsFound = true;
+            //If we really reach this, lets try to do our best with the outline and see the bug
+        }            
+        return sortedBorderPoints;
+
+        //Tansfer a point from unsorted set to sorted one.
+        static void TransferPoint(Vector2Int origin, HashSet<Vector2Int> unsortedBorderPoints, HashSet<Vector2Int> sortedBorderPoints)
+        {
+            sortedBorderPoints.Add(origin);
+            unsortedBorderPoints.Remove(origin);
+        }
+
     }
 
-
-    Vector3 GetEdgePoint(int x, int y, Vector2Int direction)
+    private void DrawBorder(LineRenderer lineRenderer, HashSet<Vector2Int> sortedBorderPoints)
     {
-        float xOffset = direction == directions[0] ? 1 : direction == directions[2] ? -1 : 0;
-        float yOffset = direction == directions[1] ? -1 : direction == directions[3] ? 1 : 0;
-        return new Vector3(x + xOffset / 2, y + yOffset / 2, 0);
-    }
-
-    void CreateBorderLineRenderer(List<Vector3> borderPoints)
-    {
+        List<Vector3> borderPoints = new List<Vector3>();
+        foreach(Vector2Int borderLocalCoord in sortedBorderPoints)
+        {
+            borderPoints.Add(grid.LocalToCellWorld(borderLocalCoord));
+        }
         lineRenderer.positionCount = borderPoints.Count;
         lineRenderer.SetPositions(borderPoints.ToArray());
+        lineRenderer.loop = true;
     }
+ 
 }
+
+
