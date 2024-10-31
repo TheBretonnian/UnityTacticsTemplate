@@ -26,8 +26,13 @@ public class GridManager  : MonoBehaviour
     void Awake()
     {
         //Get reference of grid
-        //For demo: create a instance of SquareGrid component, TO DO replace with proper dependency injection
-        grid = new SquareGridComponent();
+        if(grid==null)
+        {
+            if(!TryGetComponent<IGrid<ITile>>(out grid))
+            {
+                Debug.LogError("No Grid Component found");
+            }
+        }
         //Wrap the concrete SquareGrid into an adapter which implements the interface expected by Pathfinding => TypeSafe
         gridAdapter = new GridAdapter<ITile>(grid);
 
