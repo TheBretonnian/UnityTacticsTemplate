@@ -70,7 +70,7 @@ public class SquareGridBorderOutline
 
         HashSet<Vector2Int> unsortedBorderPoints = GetBorderPoints(range);
 
-        HashSet<Vector2Int> sortedBorderPoints = SortBorderPoints(origin, unsortedBorderPoints);
+        List<Vector2Int> sortedBorderPoints = SortBorderPoints(origin, unsortedBorderPoints);
 
         DrawBorder(lineRenderer, sortedBorderPoints);
     }
@@ -115,56 +115,70 @@ public class SquareGridBorderOutline
         return unsortedBorderPoints;
     }
 
-    private HashSet<Vector2Int> SortBorderPoints(Vector2Int origin, HashSet<Vector2Int> unsortedBorderPoints)
+    private List<Vector2Int> SortBorderPoints(Vector2Int origin, HashSet<Vector2Int> unsortedBorderPoints)
     {
-        HashSet<Vector2Int> sortedBorderPoints = new HashSet<Vector2Int>();
+        List<Vector2Int> sortedBorderPoints = new List<Vector2Int>();
 
-        if(!unsortedBorderPoints.Contains(origin)) //Initial plausibility check
+        // Check if origin is a valid starting point
+        if (!unsortedBorderPoints.Contains(origin))
         {
+            Debug.LogError("Invalid origin: Starting point is not part of the border.");
             return sortedBorderPoints;
         }
-        TransferPoint(origin, unsortedBorderPoints, sortedBorderPoints);
 
-        bool NoMorePointsFound = false;
+        // Start ordering from the origin
+        TransferPoint(origin, unsortedBorderPoints, sortedBorderPoints);
         Vector2Int currentPoint = origin;
 
-        while(!NoMorePointsFound)
+        // Continue until we've either looped back to the origin or run out of valid points
+        while (unsortedBorderPoints.Count > 0)
         {
-            //Search through all directions in clockwise direction
+            bool pointFound = false;
+
+            // Search clockwise around the current point for the next border point
             for (int i = 0; i < directions.Length; i++)
             {
-                //Try to search next border point in unsorted set
                 Vector2Int nextPoint = currentPoint + directions[i];
-                if(unsortedBorderPoints.Contains(nextPoint))
+
+                if (unsortedBorderPoints.Contains(nextPoint))
                 {
-                    TransferPoint(nextPoint,unsortedBorderPoints,sortedBorderPoints);
+                    TransferPoint(nextPoint, unsortedBorderPoints, sortedBorderPoints);
                     currentPoint = nextPoint;
-                    break; //Exit this search
-                }
-                else if((nextPoint == origin) || (unsortedBorderPoints.Count == 0))
-                {
-                    //We have reach the origin again so Or no more points
-                    NoMorePointsFound = true;
-                    break; //Exit this search
+                    pointFound = true;
+                    break; //exit for loop search
                 }
             }
-            //If we cannot find any further point but the set of unsorted points is not empty 
-            //(e.g. invalid points like inner islands) we should stop the algorith as we cannot continue
-            NoMorePointsFound = true;
-            //If we really reach this, lets try to do our best with the outline and see the bug
-        }            
-        return sortedBorderPoints;
 
-        //Tansfer a point from unsorted set to sorted one.
-        static void TransferPoint(Vector2Int origin, HashSet<Vector2Int> unsortedBorderPoints, HashSet<Vector2Int> sortedBorderPoints)
-        {
-            sortedBorderPoints.Add(origin);
-            unsortedBorderPoints.Remove(origin);
+            if (!pointFound)
+            {
+                Debug.LogWarning("Encountered isolated border points or an unexpected shape. Stopping outline.");
+                break; //exit entire while search
+            }
         }
 
+        // If we didn’t return to the origin, this could indicate an incomplete outline or unconnected points.
+        if (currentPoint != origin)
+        {
+            Debug.LogWarning("Border outline did not return to origin. Possible unconnected areas.");
+        }
+
+        // Final check for remaining points (indicative of inner islands or disconnected border points)
+        if (unsortedBorderPoints.Count > 0)
+        {
+            Debug.LogWarning($"Unsorted points remain: {unsortedBorderPoints.Count}. These may be inner islands or disconnected regions.");
+        }
+
+        return sortedBorderPoints;
+
+        // Helper function to transfer points
+        static void TransferPoint(Vector2Int point, HashSet<Vector2Int> unsorted, List<Vector2Int> sorted)
+        {
+            sorted.Add(point);
+            unsorted.Remove(point);
+        }
     }
 
-    private void DrawBorder(LineRenderer lineRenderer, HashSet<Vector2Int> sortedBorderPoints)
+    private void DrawBorder(LineRenderer lineRenderer, List<Vector2Int> sortedBorderPoints)
     {
         List<Vector3> borderPoints = new List<Vector3>();
         foreach(Vector2Int borderLocalCoord in sortedBorderPoints)
@@ -173,7 +187,8 @@ public class SquareGridBorderOutline
         }
         lineRenderer.positionCount = borderPoints.Count;
         lineRenderer.SetPositions(borderPoints.ToArray());
-        lineRenderer.loop = true;
+        //Close the loop if this is not the case
+        lineRenderer.loop = borderPoints[0] != borderPoints[^1];
     }
  
 }
