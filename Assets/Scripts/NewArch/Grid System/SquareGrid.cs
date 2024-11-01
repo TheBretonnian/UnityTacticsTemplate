@@ -70,7 +70,7 @@ public class SquareGrid<T> : IGrid<T>
                coordinates.y >= 0 && coordinates.y < Height;
     }
 
-    public Vector3 LocalToCellWorld(Vector2Int localCoordinates)
+    public Vector3 LocalToWorld(Vector2Int localCoordinates)
     {
         return new Vector3((float)localCoordinates.x, (float)localCoordinates.y, 0.0f) * CellSize + _origin;
     }
@@ -90,6 +90,6 @@ public class SquareGrid<T> : IGrid<T>
 
     public void SetInitialized()
     {
-        this.IsInitialized = true;
+        IsInitialized = true;
     }
 }

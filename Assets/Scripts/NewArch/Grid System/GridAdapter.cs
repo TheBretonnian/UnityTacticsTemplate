@@ -48,11 +48,6 @@ public class GridAdapter<T> : IGrid<IPathfindingNode>
         return _grid.AreValidCoordinates(localCoordinates);
     }
 
-    public Vector3 LocalToCellWorld(Vector2Int localCoordinates)
-    {
-        return _grid.LocalToCellWorld(localCoordinates);
-    }
-
     public Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates)
     {
         return _grid.LocalToCellCenterWorld(localCoordinates);

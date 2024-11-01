@@ -56,7 +56,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
 
     public Vector3 LocalToCellWorld(Vector2Int localCoordinates)
     {
-        return grid.LocalToCellWorld(localCoordinates);
+        return grid.LocalToWorld(localCoordinates);
     }
 
     public Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates)

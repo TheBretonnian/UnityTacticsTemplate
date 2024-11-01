@@ -24,7 +24,7 @@ Notes:
 */
 public class SquareGridBorderOutline : IBorderOutliner
 {
-    private readonly IGrid<ITile> grid;
+    private readonly SquareGrid<ITile> grid;
 
     private static readonly Vector2Int[] directions = {
         new Vector2Int(0, 1),  // Up
@@ -42,7 +42,7 @@ public class SquareGridBorderOutline : IBorderOutliner
         { new Vector2Int(-1, 0), new[] { new Vector2Int(0, 0), new Vector2Int(0, 1) } }   // Left
     };
 
-    public SquareGridBorderOutline(IGrid<ITile> grid)
+    public SquareGridBorderOutline(SquareGrid<ITile> grid)
     {
         this.grid = grid;
     }
@@ -169,7 +169,7 @@ public class SquareGridBorderOutline : IBorderOutliner
         List<Vector3> borderPoints = new List<Vector3>();
         foreach(Vector2Int borderLocalCoord in sortedBorderPoints)
         {
-            borderPoints.Add(grid.LocalToCellWorld(borderLocalCoord));
+            borderPoints.Add(grid.LocalToWorld(borderLocalCoord));
         }
         lineRenderer.positionCount = borderPoints.Count;
         lineRenderer.SetPositions(borderPoints.ToArray());

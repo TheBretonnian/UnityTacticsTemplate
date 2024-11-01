@@ -23,7 +23,8 @@ public interface IGrid<T>
     bool AreValidCoordinates(Vector2Int localCoordinates);
 
     //Transform bi-dimensional local space coordinates into a world Vector3 position (botton right corner of Cell)
-    Vector3 LocalToCellWorld(Vector2Int localCoordinates);
+    //This is not universal for any grid geometry : not the same for square or hex => remove from common interface
+    //Vector3 LocalToCellWorld(Vector2Int localCoordinates);
 
     Vector3 LocalToCellCenterWorld(Vector2Int localCoordinates);
 
