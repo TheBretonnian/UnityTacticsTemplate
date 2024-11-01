@@ -9,10 +9,11 @@ using UnityEngine;
 // 2. the grid layout (geometry) : square / hex / others...
 public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
 {
-    //Fields
-    private int _height;
-    private int _width;
-    private int _cellSite;
+    //Fields (TO DO: Add [SerializableField])
+    private int _height = 10;
+    private int _width = 10;
+    private int _cellSize = 10;
+    private bool _isGridXZ = false;
 
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
@@ -23,7 +24,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
     //Properties
     public int Width {get => _width;}
     public int Height {get => _height;}
-    public int CellSize {get => _cellSite;}
+    public int CellSize {get => _cellSize;}
     public bool IsInitialized {get => grid.IsInitialized;}
 
 
@@ -77,9 +78,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
     
     void Start()
     {
-        Vector3 origin = new Vector3(0.0f,0.0f,0.0f);
-        //origin = transform.position;
-        grid = new SquareGrid<ITile>(Width,Height,CellSize,origin);
+        grid = new SquareGrid<ITile>(Width,Height,CellSize,transform.position,_isGridXZ);
         borderOutliner = new SquareGridBorderOutline(grid);
     }
 
