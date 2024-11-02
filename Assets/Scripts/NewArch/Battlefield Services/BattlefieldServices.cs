@@ -24,7 +24,7 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     
 
     //Pathfinding
-    public Range GetRangeWalkable(ITile origin, int distance)
+    public Range GetRangeWalkable(ITile origin, int distance, IUnit movingUnit = null)
     {
         throw new System.NotImplementedException();
     }

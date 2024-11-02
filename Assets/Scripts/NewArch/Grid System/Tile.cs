@@ -4,7 +4,10 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
 {
     //Private fields
     ITileVisual tileVisual;
+    //Indicates if this terrain is walkable at all (false if contains impassible obstacle)
     bool isWalkableTerrain;
+    //Holds current status of passable (temporarily false if occupied by enemy unit)
+    bool isPassable;
     
     //Public Properties (ITile)
     public Vector2Int LocalCoordinates{ get; private set;} //Shared by ITile and IPathfindingNoe
@@ -27,6 +30,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
         LocalCoordinates = localCoordinates;
         //Set default values
         isWalkableTerrain = true;
+        isPassable = true;
         IsInZoC = false;
         ZoCPenalty = 0;
     }
@@ -48,7 +52,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public bool IsWalkable()
     {
         //Implement walkable check rules here like:
-        return isWalkableTerrain && !IsOccupied(); 
+        return isWalkableTerrain && isPassable;
     }
 
     public bool IsOccupied() => Unit != null;
