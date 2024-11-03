@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class ServiceGrid : IServiceGrid
 {
-    GridManager gridManager;
+    IGrid<ITile> grid;
 
-    public ServiceGrid(GridManager gridManager)
+    public ServiceGrid(IGrid<ITile> grid)
     {
-        this.gridManager = gridManager;
+        this.grid = grid;
     }
 
     public Range GetRange(ITile origin, int distance)
     {
         //diagonalAllowed hardcoded to true -> Consider parametrization
-        return gridManager.Grid.GetNeighbours(origin.LocalCoordinates,distance,true) as Range;
+        return grid.GetNeighbours(origin.LocalCoordinates,distance,true) as Range;
     }
     public HashSet<IUnit> GetUnitsInRange(Range tiles)
     {
@@ -61,14 +61,14 @@ public class ServiceGrid : IServiceGrid
     //so the bussines rules are not contaminated with a concrete tile dependency
     public ITile GetTileFromWorldPosition(Vector3 worldPosition)
     {
-        return gridManager.Grid.GetElement(gridManager.Grid.WorldToLocal(worldPosition));
+        return grid.GetElement(grid.WorldToLocal(worldPosition));
     }
     
 
     //Line Methods
     public float GetDistance(ITile orig, ITile dest)
     {
-        return gridManager.Grid.CalculateDistance(orig.LocalCoordinates, dest.LocalCoordinates);
+        return grid.CalculateDistance(orig.LocalCoordinates, dest.LocalCoordinates);
     }
     public Range GetLineOfTiles(ITile orig, ITile dest)
     {
@@ -81,7 +81,7 @@ public class ServiceGrid : IServiceGrid
         //This method depends on Tile directly, breaking the dependency inversion rule -> Separate?
         Unit concreteUnit = unit as Unit;
         Vector3 unitPosition = concreteUnit.transform.position;
-        return gridManager.Grid.GetElement(gridManager.Grid.WorldToLocal(unitPosition));
+        return grid.GetElement(grid.WorldToLocal(unitPosition));
     }
     public IUnit GetUnitFromTile(ITile tile)
     {
@@ -89,6 +89,6 @@ public class ServiceGrid : IServiceGrid
     }
     public float GetDistance(IUnit fromUnit, IUnit toUnit)
     {
-        return gridManager.Grid.CalculateDistance(GetTileFromUnit(fromUnit).LocalCoordinates, GetTileFromUnit(toUnit).LocalCoordinates);
+        return grid.CalculateDistance(GetTileFromUnit(fromUnit).LocalCoordinates, GetTileFromUnit(toUnit).LocalCoordinates);
     }
 }
