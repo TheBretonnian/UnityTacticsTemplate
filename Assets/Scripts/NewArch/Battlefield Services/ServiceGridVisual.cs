@@ -14,7 +14,7 @@ public class ServiceGridVisual : IServiceGridVisual
         this.borderOutliner = borderOutliner;
     }
 
-    public void HighlightRange(Range range, Color color)
+    public void HighlightRange(IEnumerable<ITile> range, Color color)
     {
         foreach(ITile tile in range)
         {
@@ -25,7 +25,7 @@ public class ServiceGridVisual : IServiceGridVisual
         }
     }
 
-    public void ClearHighlightRange(Range range)
+    public void ClearHighlightRange(IEnumerable<ITile> range)
     {
         foreach(ITile tile in range)
         {

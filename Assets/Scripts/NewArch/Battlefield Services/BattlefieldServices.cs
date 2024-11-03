@@ -22,7 +22,6 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
         serviceGridVisual = new ServiceGridVisual(gridManager.BorderOutliner,lineRendererPrefab,parent);
     }
     
-
     //Pathfinding
     public Range GetRangeWalkable(ITile origin, int distance, IUnit movingUnit = null)
     {
@@ -64,11 +63,11 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     }
 
     //Grid Visuals
-    public void HighlightRange(Range range, Color color)
+    public void HighlightRange(IEnumerable<ITile> range, Color color)
     {
        serviceGridVisual.HighlightRange(range, color);
     }
-    public void ClearHighlightRange(Range range)
+    public void ClearHighlightRange(IEnumerable<ITile> range)
     {
         serviceGridVisual.ClearHighlightRange(range);
     }

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IServiceGridVisual
 {
-    //Highlights
-    void HighlightRange(Range range, Color color);
-    void ClearHighlightRange(Range range);
+    //Highlight IEnumerable to be more flexible: accepts either Range (HashSet) or List (for lines)
+    void HighlightRange(IEnumerable<ITile> range, Color color);
+    void ClearHighlightRange(IEnumerable<ITile> range);
 
     //Outlines
     //return index of Outline as int (Object Pool)
