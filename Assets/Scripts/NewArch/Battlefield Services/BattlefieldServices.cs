@@ -17,9 +17,9 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     {
         this.gridManager = gridManager;
         this.lineRendererPrefab = lineRendererPrefab;
-        serviceGrid = new ServiceGrid(gridManager);
-        serviceUnitLocation = new ServiceUnitLocation(gridManager);
-        serviceGridVisual = new ServiceGridVisual(gridManager,lineRendererPrefab,parent);
+        serviceGrid = new ServiceGrid(gridManager.Grid);
+        serviceUnitLocation = new ServiceUnitLocation(gridManager.Grid);
+        serviceGridVisual = new ServiceGridVisual(gridManager.BorderOutliner,lineRendererPrefab,parent);
     }
     
 

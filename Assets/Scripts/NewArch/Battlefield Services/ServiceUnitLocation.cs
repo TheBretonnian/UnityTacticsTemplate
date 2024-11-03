@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class ServiceUnitLocation : IServiceUnitLocation
 {
-    GridManager gridManager;
+    IGrid<ITile> grid;
 
-    public ServiceUnitLocation(GridManager gridManager)
+    public ServiceUnitLocation(IGrid<ITile> grid)
     {
-        this.gridManager = gridManager;
+        this.grid = grid;
     }
 
     public HashSet<IUnit> GetUnitsInRange(Range tiles)
@@ -24,7 +24,7 @@ public class ServiceUnitLocation : IServiceUnitLocation
     }
     public HashSet<IUnit> GetUnitsInRange(ITile origin, int distance)
     {
-        return GetUnitsInRange(gridManager.Grid.GetNeighbours(origin.LocalCoordinates,distance,true) as Range);
+        return GetUnitsInRange(grid.GetNeighbours(origin.LocalCoordinates,distance,true) as Range);
     }
     public HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units)
     {
@@ -57,7 +57,7 @@ public class ServiceUnitLocation : IServiceUnitLocation
         //This method depends on Tile directly, breaking the dependency inversion rule -> Separate?
         Unit concreteUnit = unit as Unit;
         Vector3 unitPosition = concreteUnit.transform.position;
-        return gridManager.Grid.GetElement(gridManager.Grid.WorldToLocal(unitPosition));
+        return grid.GetElement(grid.WorldToLocal(unitPosition));
     }
     public IUnit GetUnitFromTile(ITile tile)
     {
@@ -65,6 +65,6 @@ public class ServiceUnitLocation : IServiceUnitLocation
     }
     public float GetDistance(IUnit fromUnit, IUnit toUnit)
     {
-        return gridManager.Grid.CalculateDistance(GetTileFromUnit(fromUnit).LocalCoordinates, GetTileFromUnit(toUnit).LocalCoordinates);
+        return grid.CalculateDistance(GetTileFromUnit(fromUnit).LocalCoordinates, GetTileFromUnit(toUnit).LocalCoordinates);
     }
 }

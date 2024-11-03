@@ -8,10 +8,10 @@ public class ServiceGridVisual : IServiceGridVisual
 
     private List<LineRenderer> activeLineRenderer = new List<LineRenderer>();
 
-    public ServiceGridVisual(GridManager gridManager, LineRenderer lineRendererPrefab, Transform parent = null)
+    public ServiceGridVisual(IBorderOutliner borderOutliner, LineRenderer lineRendererPrefab, Transform parent = null)
     {
         lineRendererPool = new ObjectPool<LineRenderer>(lineRendererPrefab,3, parent);
-        borderOutliner = gridManager.BorderOutliner;
+        this.borderOutliner = borderOutliner;
     }
 
     public void HighlightRange(Range range, Color color)
