@@ -7,7 +7,6 @@ public class Pathfinding
 {
     private IGrid<IPathfindingNode> pathfindingGrid;
     private bool diagonalAllowed;
-    public IGrid<IPathfindingNode> PathfindingGrid { get => pathfindingGrid;}
 
     public Pathfinding(IGrid<IPathfindingNode> grid, bool diagonalAllowed = true)
     {
@@ -101,9 +100,17 @@ public class Pathfinding
         return null;
     }
 
-    public void UpdateZoC()
+    public void ResetPathfindingProperties()
     {
-        //Update ZoCInfo in PathfindingNode or in separate Grid.
+        for(int x = 0; x < pathfindingGrid.Width; x++)
+        {
+            for(int y = 0; y < pathfindingGrid.Height; y++)
+            {
+                IPathfindingNode node = pathfindingGrid.GetElement(new Vector2Int(x,y));
+                node.IsInZoC = false;
+                node.IsPassable = true;
+            }
+        }
     }
 
     private IPathfindingNode GetNodeWithLowestFCost(List<IPathfindingNode> openList)
@@ -125,8 +132,7 @@ public class Pathfinding
         else
         {
             return null;
-        }
-        
+        }        
     }
 
     private List<IPathfindingNode> ReconstructPath(IPathfindingNode goal)
@@ -142,9 +148,7 @@ public class Pathfinding
         }
         while (node.CameFrom != null);
 
-        //
         path.Reverse();
-
         return path;
     }
 

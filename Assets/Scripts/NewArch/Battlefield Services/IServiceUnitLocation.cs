@@ -11,6 +11,7 @@ public interface IServiceUnitLocation
     HashSet<IUnit> GetUnitsInRange(Range tiles);
     HashSet<IUnit> GetUnitsInRange(ITile origin, int distance);
 
+    HashSet<IUnit> GetAllUnits();
     HashSet<IUnit> GetEnemiesInSet(IUnit referenceUnit, HashSet<IUnit> units);
     HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units);
 }

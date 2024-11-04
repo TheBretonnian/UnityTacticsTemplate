@@ -16,6 +16,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     //Public Properties (IPathfinding)
     public IPathfindingNode CameFrom { get; set; }
     public bool IsInZoC { get; set; }
+    public bool IsPassable { get => isPassable; set => isPassable = value; }
     public int ZoCPenalty { get; set; }
     public float FCost { get; private set;}
     public float GCost { get; set; }
@@ -24,7 +25,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     //Public Properties ITarget
     public bool IsUnit{get => false;}
     public IUnit GetUnit{get => Unit;}
-
+    
     public void Initialize(Vector2Int localCoordinates)
     {
         LocalCoordinates = localCoordinates;

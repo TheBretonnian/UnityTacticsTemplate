@@ -10,8 +10,11 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     GridManager gridManager; //Assign with dependency injection: Editor or SceneManager
     ServiceGrid serviceGrid;
     ServiceUnitLocation serviceUnitLocation;
+    ServicePathfinding servicePathfinding;
     ServiceGridVisual serviceGridVisual;
     LineRenderer lineRendererPrefab; //Assign it with dependency injection if class promote to MonoBehaviour
+    private bool allowsEnemyPassage = false;
+    private bool allowsAllyPassage = true;
 
     public BattlefieldServices(GridManager gridManager, LineRenderer lineRendererPrefab, Transform parent)
     {
@@ -19,21 +22,22 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
         this.lineRendererPrefab = lineRendererPrefab;
         serviceGrid = new ServiceGrid(gridManager.Grid);
         serviceUnitLocation = new ServiceUnitLocation(gridManager.Grid);
+        servicePathfinding = new ServicePathfinding(gridManager.Pathfinding,serviceGrid,serviceUnitLocation,allowsEnemyPassage,allowsAllyPassage);
         serviceGridVisual = new ServiceGridVisual(gridManager.BorderOutliner,lineRendererPrefab,parent);
     }
     
     //Pathfinding
     public Range GetRangeWalkable(ITile origin, int distance, IUnit movingUnit = null)
     {
-        throw new System.NotImplementedException();
+        return servicePathfinding.GetRangeWalkable(origin,distance,movingUnit);
     }
     public bool HasPath(ITile orig, ITile dest, IUnit movingUnit = null)
     {
-        throw new System.NotImplementedException();
+        return servicePathfinding.HasPath(orig,dest,movingUnit);
     }
-    public Range GetPath(ITile orig, ITile dest, IUnit movingUnit = null)
+    public List<Vector3> GetPath(ITile orig, ITile dest, IUnit movingUnit = null)
     {
-        throw new System.NotImplementedException();
+        return servicePathfinding.GetPath(orig,dest,movingUnit);
     }
 
     //LoS and Cover
@@ -102,7 +106,7 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
         return serviceGrid.GetDistance(orig,dest);
     }
 
-    public Range GetLineOfTiles(ITile orig, ITile dest)
+    public List<ITile> GetLineOfTiles(ITile orig, ITile dest)
     {
         return serviceGrid.GetLineOfTiles(orig,dest);
     }
@@ -141,6 +145,11 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     public HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units)
     {
         return serviceUnitLocation.GetAlliesInSet(referenceUnit,units);
+    }
+
+    public HashSet<IUnit> GetAllUnits()
+    {
+        return serviceUnitLocation.GetAllUnits();
     }
 
     //Services:

@@ -26,6 +26,22 @@ public class ServiceUnitLocation : IServiceUnitLocation
     {
         return GetUnitsInRange(grid.GetNeighbours(origin.LocalCoordinates,distance,true) as Range);
     }
+    public HashSet<IUnit> GetAllUnits()
+    {
+        HashSet<IUnit> units = new HashSet<IUnit>();
+        for(int x = 0; x < grid.Width; x++)
+        {
+            for(int y = 0; y < grid.Height; y++)
+            {
+                IUnit unit = grid.GetElement(new Vector2Int(x,y)).Unit;
+                if(unit != null)
+                {
+                    units.Add(unit);
+                }
+            }
+        }
+        return units;
+    }
     public HashSet<IUnit> GetAlliesInSet(IUnit referenceUnit, HashSet<IUnit> units)
     {
         HashSet<IUnit> allies = new HashSet<IUnit>();

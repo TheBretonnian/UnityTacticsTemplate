@@ -10,5 +10,5 @@ public interface IServiceGrid
 
     //Line methods
     float GetDistance(ITile orig, ITile dest);
-    Range GetLineOfTiles(ITile orig, ITile dest);
+    List<ITile> GetLineOfTiles(ITile orig, ITile dest);
 }
