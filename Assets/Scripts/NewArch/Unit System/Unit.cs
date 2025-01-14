@@ -21,6 +21,11 @@ public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
     {
         throw new NotImplementedException();
     }
+    public IAbility GetMoveAbility()
+    {
+        throw new NotImplementedException();
+    }
+    
 
     //ISelectableTarget:
     //Public Properties ITarget
@@ -44,5 +49,11 @@ public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
     public void OnHoverExit()
     {
         throw new NotImplementedException();
+    }
+
+    public void ExhaustUnit()
+    {
+        //Set available action points to zero
+        //fires UnitExhausted Global Event
     }
 }//end Unit
