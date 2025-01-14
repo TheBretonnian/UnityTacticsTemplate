@@ -4,11 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Events/GameEvent")]
 public class GameEvent<T> : ScriptableObject, IGameEvent
 {
-    public event Action<T> GameEvent;
+    public event Action<T> gameEvent;
 
     public void Raise(T arg)
     {
-        GameEvent?.Invoke(arg);
+        gameEvent?.Invoke(arg);
     }
 
     // Implement the Raise method from IGameEvent (overloading Raise for flexibility)
