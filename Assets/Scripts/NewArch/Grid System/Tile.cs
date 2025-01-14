@@ -4,6 +4,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
 {
     //Private fields
     ITileVisual tileVisual;
+    [SerializeField] TileData tileData;
     //Indicates if this terrain is walkable at all (false if contains impassible obstacle)
     bool isWalkableTerrain;
     //Holds current status of passable (temporarily false if occupied by enemy unit)
@@ -26,6 +27,12 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public bool IsUnit{get => false;}
     public IUnit GetUnit{get => Unit;}
     
+
+    //Public tileData
+    public TileData TileData { get => tileData; set => tileData = value; }
+
+
+
     public void Initialize(Vector2Int localCoordinates)
     {
         LocalCoordinates = localCoordinates;
