@@ -28,6 +28,6 @@ public class ServiceGrid : IServiceGrid
     }
     public List<ITile> GetLineOfTiles(ITile orig, ITile dest)
     {
-        throw new System.NotImplementedException();
+        return grid.GetLine(orig.LocalCoordinates, dest.LocalCoordinates);
     }
 }

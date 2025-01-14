@@ -57,4 +57,14 @@ public class GridAdapter<T> : IGrid<IPathfindingNode>
     {
         return _grid.WorldToLocal(worldPosition);
     }
+
+    public List<IPathfindingNode> GetLine(Vector2Int orig, Vector2Int dest)
+    {
+        List<IPathfindingNode> neighbours = new List<IPathfindingNode>(); 
+        foreach (T element in _grid.GetLine(orig, dest))
+        {
+            neighbours.Add((IPathfindingNode)element);
+        }
+        return neighbours;
+    }
 }

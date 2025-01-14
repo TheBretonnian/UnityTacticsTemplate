@@ -122,4 +122,17 @@ public class SquareGrid<T> : IGrid<T>
     {
         IsInitialized = true;
     }
+
+    public List<T> GetLine(Vector2Int orig, Vector2Int dest)
+    {
+        //1. Sample the line from orig to dest (in local coords) in many points (the smaller the better)
+        //2. For each point get the tile
+        //3. Add the tile to a list if tile is not already included. Always check against last since the line is ordered.
+        //4. Repeat until you reached dest point
+        //5. Return the list
+
+        //Error Handling: Return null if orig or dest are not valid
+        
+        throw new System.NotImplementedException();
+    }
 }

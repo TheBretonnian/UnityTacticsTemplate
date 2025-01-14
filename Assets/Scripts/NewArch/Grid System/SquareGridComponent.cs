@@ -9,11 +9,10 @@ using UnityEngine;
 // 2. the grid layout (geometry) : square / hex / others...
 public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
 {
-    //Fields (TO DO: Add [SerializableField])
-    private int _height = 10;
-    private int _width = 10;
-    private int _cellSize = 10;
-    private bool _isGridXZ = false;
+    [SerializeField] private int _height = 10;
+    [SerializeField] private int _width = 10;
+    [SerializeField] private int _cellSize = 1;
+    [SerializeField] private bool _isGridXZ = false;
 
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
@@ -70,16 +69,26 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
         return grid.WorldToLocal(worldPosition);
     }
 
+    public List<ITile> GetLine(Vector2Int orig, Vector2Int dest)
+    {
+        return grid.GetLine(orig,dest);
+    }
+
     public void OutlineBorderOfRange(Range range, LineRenderer lineRenderer)
     {
         borderOutliner.OutlineBorderOfRange(range,lineRenderer);
     }
 
     
-    void Start()
+    void Awake()
     {
         grid = new SquareGrid<ITile>(Width,Height,CellSize,transform.position,_isGridXZ);
         borderOutliner = new SquareGridBorderOutline(grid);
+    }
+
+    void Start()
+    {
+        CreateGrid();
     }
 
     public void CreateGrid()
@@ -97,7 +106,6 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
         grid.SetInitialized();
     }
 
-    //The following methods can delegate to GridComponent
     public ITile CreateTile(Vector2Int localCoord)
     {
         ITile newTile;

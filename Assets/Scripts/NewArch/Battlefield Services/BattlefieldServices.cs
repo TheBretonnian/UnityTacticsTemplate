@@ -7,14 +7,14 @@ using UnityEngine;
 //This class depends on tiny classes which implement each specific interface.
 public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServicePathfinding, IServiceLoSandCover, IServiceGridVisual
 {  
-    GridManager gridManager; //Assign with dependency injection: Editor or SceneManager
+    [SerializeField] GridManager gridManager; //Assign with dependency injection: Editor or SceneManager
+    [SerializeField] LineRenderer lineRendererPrefab; //Assign it with dependency injection if class promote to MonoBehaviour
+    [SerializeField] private bool allowsEnemyPassage = false;
+    [SerializeField] private bool allowsAllyPassage = true;
     ServiceGrid serviceGrid;
     ServiceUnitLocation serviceUnitLocation;
     ServicePathfinding servicePathfinding;
     ServiceGridVisual serviceGridVisual;
-    LineRenderer lineRendererPrefab; //Assign it with dependency injection if class promote to MonoBehaviour
-    private bool allowsEnemyPassage = false;
-    private bool allowsAllyPassage = true;
 
     public BattlefieldServices(GridManager gridManager, LineRenderer lineRendererPrefab, Transform parent)
     {
@@ -152,10 +152,29 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
         return serviceUnitLocation.GetAllUnits();
     }
 
-    //Services:
-    // + IServiceGrid
-    // + IServiceUnitLocation
-    // + IServiceGridVisual
-    // + IServicePathfinding
-    // + IServiceLoSandCover
+    public bool HasLos(IUnit attacker, IUnit defender, out List<ICover> interferingCovers, out List<IUnit> interferingUnits)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool HasLos(ITile orig, ITile dest, out List<ICover> interferingCovers, out List<IUnit> interferingUnits)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float GetNormalizedCover(List<ICover> interferingCovers)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool GetNormalizedCoverIfLos(IUnit attacker, IUnit defender, out float cover)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool GetNormalizedCoverIfLoS(IUnit attacker, IUnit defender, out float cover, out List<ICover> interferingCovers, out List<IUnit> interfingUnits)
+    {
+        throw new System.NotImplementedException();
+    }
+
 }

@@ -30,4 +30,7 @@ public interface IGrid<T>
 
     Vector2Int WorldToLocal(Vector3 worldPosition);
 
+    //Return a ordered list of elements starting with origin and ending with dest, if valid.
+    List<T> GetLine(Vector2Int orig, Vector2Int dest);
+
 }
