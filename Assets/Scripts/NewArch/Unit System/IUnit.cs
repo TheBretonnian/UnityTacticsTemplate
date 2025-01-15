@@ -19,4 +19,6 @@ public interface IUnit
     int TeamNumber{get; set;}
     IAbility GetDefaultAbility();
 
+    bool IsExhausted();
+
 }//end IUnit
