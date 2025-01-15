@@ -17,11 +17,22 @@ public class TurnData : ScriptableObject
         EligibleUnits = new List<IUnit>();
     }
 
-    public void IncreaseRound() => CurrentRound++;
-    public void IncreaseTurn() => CurrentTurn++;
+    public void IncreaseRound()
+    {
+        CurrentRound++;
+        NewRoundStartedEvent?.Invoke(CurrentRound);
+    }
+    public void IncreaseTurn()
+    {
+        CurrentTurn++;
+        NewTurnStartedEvent?.Invoke(this);
+    }
 
     public void SetCurrentPlayer(Player p) => CurrentPlayer = p;
     public void SetEligibleUnits(List<IUnit> eligibleUnits) => EligibleUnits = eligibleUnits;
+
+    public event Action<int> NewRoundStartedEvent;
+    public event Action<TurnData> NewTurnStartedEvent;
     
  
 }
