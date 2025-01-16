@@ -4,16 +4,17 @@ using UnityEngine;
 public class ServiceGrid : IServiceGrid
 {
     IGrid<ITile> grid;
+    bool diagonalAllowed;
 
-    public ServiceGrid(IGrid<ITile> grid)
+    public ServiceGrid(IGrid<ITile> grid, bool diagonalAllowed=true)
     {
         this.grid = grid;
+        this.diagonalAllowed = diagonalAllowed;
     }
 
     public Range GetRange(ITile origin, int distance)
     {
-        //diagonalAllowed hardcoded to true -> Consider parametrization
-        return grid.GetNeighbours(origin.LocalCoordinates,distance,true) as Range;
+        return grid.GetNeighbours(origin.LocalCoordinates,distance,diagonalAllowed) as Range;
     }
     
     public ITile GetTileFromWorldPosition(Vector3 worldPosition)
