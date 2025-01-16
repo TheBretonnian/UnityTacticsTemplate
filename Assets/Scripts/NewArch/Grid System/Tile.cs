@@ -19,9 +19,10 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public bool IsInZoC { get; set; }
     public bool IsPassable { get => isPassable; set => isPassable = value; }
     public int ZoCPenalty { get; set; }
-    public float FCost { get; private set;}
-    public float GCost { get; set; }
-    public float HCost { get; set; }
+    public float FCost { get => GCost + HCost;} //Total cost estimation of traversing through this node
+    public float GCost { get; set; } //Cost of the path from origin to this node
+    public float HCost { get; set; } //Heuristic cost of the path from this node to the goal node
+    public float MovingCost { get => tileData.MovementCost; }
 
     //Public Properties ITarget
     public bool IsUnit{get => false;}
@@ -52,10 +53,10 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public void Reset() => tileVisual.Reset();
 
     //Public methods IPathfinding
-    public void UpdateFCost()
-    {
-         FCost = GCost + HCost;
-    }
+    // public void UpdateFCost()
+    // {
+    //      FCost = GCost + HCost;
+    // }
 
     public bool IsWalkable()
     {

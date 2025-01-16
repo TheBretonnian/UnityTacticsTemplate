@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Terrain/TileData")]
 public class TileData : ScriptableObject
 {   
-    public int MovementCost = 1;
+    public float MovementCost = 1.0f;
     public bool IsDifficultTerrain = false;
     public bool BlocksMovement = false; //IsWalkable
     public bool BlocksLoS = false;

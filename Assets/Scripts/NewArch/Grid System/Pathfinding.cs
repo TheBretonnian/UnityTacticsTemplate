@@ -14,7 +14,7 @@ public class Pathfinding
         this.diagonalAllowed = diagonalAllowed;
     }
 
-    public List<Vector3> FindPath(int start_x, int start_y, int goal_x, int goal_y)
+    public List<Vector3> FindPath(int start_x, int start_y, int goal_x, int goal_y, float maxGCost = 0.0f)
     {
         List<IPathfindingNode> openList = new List<IPathfindingNode>();
         List<IPathfindingNode> closedList = new List<IPathfindingNode>();
@@ -38,15 +38,15 @@ public class Pathfinding
                 currentNode.GCost = int.MaxValue;
                 //Calculate heuristic using simple distance
                 currentNode.HCost = pathfindingGrid.CalculateDistance(new Vector2Int(x, y), new Vector2Int(goal_x, goal_y));
-                currentNode.UpdateFCost();
+                //currentNode.UpdateFCost();
                 currentNode.CameFrom = null;
-                //Optionally notify about the change
+                
             }
         }
         //For origin set gcost at 0
         origin.GCost = 0;
-        origin.UpdateFCost();
-        //Optionally notify about the change
+        //origin.UpdateFCost();
+        
         //Add start node to open list
         openList.Add(origin);
 
@@ -59,7 +59,15 @@ public class Pathfinding
             if(currentNode == goal)
             {
                 //Return reconstructed path, converted in Vector3 position
-                return GetPath(currentNode);
+                if(maxGCost == 0.0f || currentNode.GCost <= maxGCost)
+                {
+                    return GetPath(currentNode);
+                }
+                else
+                {
+                    return null;
+                }
+                
             }
             //Remove currentNode from openList and add it to closed list (already searched)
             openList.Remove(currentNode);
@@ -74,7 +82,7 @@ public class Pathfinding
                 }
                 // tentativeGCost is the distance from start to the neighbor through current
                 // Adjust the movement cost with ZoC penalty
-                float tentativeGCost = currentNode.GCost + pathfindingGrid.CalculateDistance(currentNode.LocalCoordinates, neighbor.LocalCoordinates);
+                float tentativeGCost = currentNode.GCost + pathfindingGrid.CalculateDistance(currentNode.LocalCoordinates, neighbor.LocalCoordinates)*neighbor.MovingCost;
 
                 // Apply ZoC penalty if in a ZoC
                 if (neighbor.IsInZoC)
@@ -86,7 +94,7 @@ public class Pathfinding
                 {
                     neighbor.CameFrom = currentNode;
                     neighbor.GCost = tentativeGCost;
-                    neighbor.UpdateFCost();
+                    //neighbor.UpdateFCost();
 
                     if (!openList.Contains(neighbor))
                     {
