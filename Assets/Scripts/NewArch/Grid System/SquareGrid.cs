@@ -132,7 +132,36 @@ public class SquareGrid<T> : IGrid<T>
         //5. Return the list
 
         //Error Handling: Return null if orig or dest are not valid
+        const int SamplesPerTile = 10; //The smaller the efficient
+        float sampleDistance = CellSize/SamplesPerTile;
+        float sampleIncrementNormalized = sampleDistance/(CellSize*CalculateDistance(orig,dest));
+
+        List<T> TilesInLine = new List<T>();
+
+        //Inout check
+        if(!AreValidCoordinates(orig) && !AreValidCoordinates(dest)) 
+        {
+            //Error: invalid input parameter so return null
+            return null; 
+        }
+
+        //Add orig
+        TilesInLine.Add(GetElement(orig));
         
-        throw new System.NotImplementedException();
+        float t = 0.0f;
+        while (t < 1.0f)
+        {
+            //For each point get the tile
+            Vector3 worldCordSamplePoint = Vector3.Lerp(LocalToWorld(orig),LocalToWorld(dest),t);
+            T newElement = GetElement(WorldToLocal(worldCordSamplePoint));
+            //Add the tile to a list if tile is not already included. Always check against last since the line is ordered.
+            if(!TilesInLine.Contains(newElement))
+            {
+                TilesInLine.Add(newElement);
+            }
+            t+=sampleIncrementNormalized;
+        }
+
+        return TilesInLine;
     }
 }
