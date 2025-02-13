@@ -7,7 +7,7 @@ using UnityEngine;
 // without needing to know:
 // 1. the grid field
 // 2. the grid layout (geometry) : square / hex / others...
-public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
+public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner, IGridManagement
 {
     [SerializeField] private int _height = 10;
     [SerializeField] private int _width = 10;
@@ -88,6 +88,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
 
     void Start()
     {
+        //If create grid on Start is active -> parameter to allow customization for SceneInitialiazation (more control for SceneManager)
         CreateGrid();
     }
 
@@ -104,6 +105,15 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner
             }
         }
         grid.SetInitialized();
+    }
+    public void DestroyGrid()
+    {
+        throw new System.NotImplementedException();
+    }
+    public void ResetGrid()
+    {
+        DestroyGrid();
+        CreateGrid();
     }
 
     public ITile CreateTile(Vector2Int localCoord)

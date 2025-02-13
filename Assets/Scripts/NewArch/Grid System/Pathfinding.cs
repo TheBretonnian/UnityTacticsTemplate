@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pathfinding
+public class Pathfinding : IPathfinding
 {
     private IGrid<IPathfindingNode> pathfindingGrid;
     private bool diagonalAllowed;

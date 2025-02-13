@@ -4,59 +4,57 @@ using UnityEngine;
 
 public class GridManager  : MonoBehaviour
 {
-    //Reference to the grid component: it can be set in Editor or on Awake with GetComponent
+    //This component acts as Facade for the exterior to the underlaying GridSystem
+    //It's then completely optional but makes the dependency injection and 
+    //referencing more confortable for the service layer
+    //Interface reference to concrete component: it can be set in Editor or on Awake with GetComponent
     private IGrid<ITile> grid; 
     private IBorderOutliner borderOutliner;
-    private GridAdapter<ITile> gridAdapter;
+    private IPathfinding pathfinding;
+    private IGridManagement gridManagement;
 
-    //Consider to use a interface in case the Pathfinding becomes a component and for better decoupling
-    private Pathfinding pathfinding;
-
-    //Prefab for Tile (To be moved to a TileFactory?)
-    private GameObject tilePrefab;
-    
-    //These parameters can be delegated to Grid and Pathfinding components
-    private int width;
-    private int height;
-    private bool diagonalAllowed;
-
-    public Pathfinding Pathfinding{get => pathfinding;}
     public IGrid<ITile> Grid { get => grid;}
     public IBorderOutliner BorderOutliner { get => borderOutliner;}
+    public IPathfinding Pathfinding{get => pathfinding;}
 
     //Unity Messages
     void Awake()
     {
-        //Get reference of concrete shape component
-        if(grid==null)
+        // Get reference of concrete components
+        if (grid == null)
         {
-            if(!TryGetComponent<IGrid<ITile>>(out grid))
+            if (!TryGetComponent<IGrid<ITile>>(out grid))
             {
                 Debug.LogError("No Grid Component found");
             }
         }
-        if(borderOutliner==null)
+        if (borderOutliner == null)
         {
-            if(!TryGetComponent<IBorderOutliner>(out borderOutliner))
+            if (!TryGetComponent<IBorderOutliner>(out borderOutliner))
             {
                 Debug.LogError("No Border Outliner Component found");
             }
         }
-        //Wrap the concrete SquareGrid into an adapter which implements the interface expected by Pathfinding => TypeSafe
-        gridAdapter = new GridAdapter<ITile>(grid);
-
-        //Consistency check: actually redundant if ITile derives from IPathfinding, but only run max. once per scene.
-        if(typeof(IPathfindingNode).IsAssignableFrom(typeof(ITile)))
+        if (pathfinding == null)
         {
-            pathfinding = new Pathfinding(gridAdapter, diagonalAllowed);
+            if (!TryGetComponent<IPathfinding>(out pathfinding))
+            {
+                Debug.LogError("No Pathfinding Component found");
+            }
         }
-        else
+        if (gridManagement == null)
         {
-            Debug.LogError("ITile does not implement IPathfindingNode");
+            if (!TryGetComponent<IGridManagement>(out gridManagement))
+            {
+                Debug.LogError("No Grid Management Component found");
+            }
         }
     }
 
-    //Public methods
+    public void CreateGrid()
+    {
+        gridManagement.CreateGrid();
+    }
     
 
 }
