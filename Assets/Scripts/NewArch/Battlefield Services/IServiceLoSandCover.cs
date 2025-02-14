@@ -7,10 +7,10 @@ public interface IServiceLoSandCover
 
     //Line of Sight
     bool HasLos(IUnit attacker, IUnit defender);
-    bool HasLos(IUnit attacker, IUnit defender, out List<ICover> interferingCovers, out List<IUnit> interferingUnits);
+    bool HasLos(IUnit attacker, IUnit defender, out List<ITile> interferingCovers, out List<IUnit> interferingUnits);
     //Methods with tiles are more suitable to get ranges and visualization jobs, therefore interfering objects may be interesting for player feedback
     bool HasLos(ITile orig, ITile dest);
-    bool HasLos(ITile orig, ITile dest, out List<ICover> interferingCovers, out List<IUnit> interferingUnits);
+    bool HasLos(ITile orig, ITile dest, out List<ITile> interferingCovers, out List<IUnit> interferingUnits);
 
     //Cover (TO DO: with unit or tiles?)
     bool HasCover(IUnit attacker, IUnit defender); 
@@ -18,12 +18,12 @@ public interface IServiceLoSandCover
     //This method can be called from the other cover method as well as second check: Raycast + rules
 
     //Cover calculator from information from HasLos (Pre-requisite)
-    float GetNormalizedCover(List<ICover> interferingCovers);
+    float GetNormalizedCover(List<ITile> interferingCovers);
 
     //Compact methods which removes need of calling HasLos (to be used directly in Abilities)
     bool GetNormalizedCoverIfLos(IUnit attacker, IUnit defender, out float cover);
     //Most Compact: return value = HasLos, Cover in out parameters together with list of interfering objects
-    bool GetNormalizedCoverIfLoS(IUnit attacker, IUnit defender, out float cover, out List<ICover> interferingCovers, out List<IUnit> interfingUnits);
+    bool GetNormalizedCoverIfLoS(IUnit attacker, IUnit defender, out float cover, out List<ITile> interferingCovers, out List<IUnit> interferingUnits);
 
     //RULES:
 
@@ -43,5 +43,3 @@ public interface IServiceLoSandCover
 
 
 }
-
-public interface ICover{}
