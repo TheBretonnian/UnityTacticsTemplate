@@ -3,7 +3,7 @@ using UnityEngine;
 public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelectableTarget
 {
     //Private fields
-    ITileVisual tileVisual;
+    [SerializeField] ITileVisual tileVisual;
     [SerializeField] TileData tileData;
     //Indicates if this terrain is walkable at all (false if contains impassible obstacle)
     bool isWalkableTerrain;

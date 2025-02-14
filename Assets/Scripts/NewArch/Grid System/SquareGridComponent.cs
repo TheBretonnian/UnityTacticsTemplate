@@ -14,6 +14,8 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner,
     [SerializeField] private int _cellSize = 1;
     [SerializeField] private bool _isGridXZ = false;
 
+    [SerializeField] private bool createGridOnStart = true;
+
     //So this component can be used stand-alone without a GridManager
     private GameObject tilePrefab; 
     private SquareGrid<ITile> grid; //This can be converted to SquareGrid<Tile> in case this class goes into User Case layer
@@ -88,8 +90,7 @@ public class SquareGridComponent : MonoBehaviour, IGrid<ITile>, IBorderOutliner,
 
     void Start()
     {
-        //If create grid on Start is active -> parameter to allow customization for SceneInitialiazation (more control for SceneManager)
-        CreateGrid();
+        if(createGridOnStart){ CreateGrid();}
     }
 
     public void CreateGrid()

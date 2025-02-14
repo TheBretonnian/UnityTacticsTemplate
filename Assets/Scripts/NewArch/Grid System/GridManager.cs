@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using UnityEngine;
@@ -16,6 +17,8 @@ public class GridManager  : MonoBehaviour
     public IGrid<ITile> Grid { get => grid;}
     public IBorderOutliner BorderOutliner { get => borderOutliner;}
     public IPathfinding Pathfinding{get => pathfinding;}
+
+    public event Action OnGridCreated;
 
     //Unity Messages
     void Awake()
@@ -54,6 +57,7 @@ public class GridManager  : MonoBehaviour
     public void CreateGrid()
     {
         gridManagement.CreateGrid();
+        OnGridCreated?.Invoke();
     }
     
 

@@ -5,7 +5,7 @@ using UnityEngine;
 // is copied into corresponding Tile.
 // Afterwards, the game object this script belongs to is removed
 // if RemoveAfterInit is true.
-public class TerrainDescriptor : MonoBehavior
+public class TerrainDescriptor : MonoBehaviour
 {
   public TileData TileData;
   public bool RemoveAfterInit = false;
