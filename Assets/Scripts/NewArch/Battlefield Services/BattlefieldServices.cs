@@ -5,7 +5,7 @@ using UnityEngine;
 //This can serve as single entry point for Battlefiled services.
 //This class may inherit from MonoBehaviour and be attach to GameObject
 //This class depends on tiny classes which implement each specific interface.
-public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServicePathfinding, IServiceLoSandCover, IServiceGridVisual
+public class BattlefieldServices : MonoBehaviour, IServiceGrid, IServiceUnitLocation, IServicePathfinding, IServiceLoSandCover, IServiceGridVisual
 {  
     [SerializeField] GridManager gridManager; //Assign with dependency injection: Editor or SceneManager
     [SerializeField] LineRenderer lineRendererPrefab; //Assign it with dependency injection if class promote to MonoBehaviour
@@ -16,14 +16,12 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
     ServicePathfinding servicePathfinding;
     ServiceGridVisual serviceGridVisual;
 
-    public BattlefieldServices(GridManager gridManager, LineRenderer lineRendererPrefab, Transform parent)
+    void Awake()
     {
-        this.gridManager = gridManager;
-        this.lineRendererPrefab = lineRendererPrefab;
         serviceGrid = new ServiceGrid(gridManager.Grid);
         serviceUnitLocation = new ServiceUnitLocation(gridManager.Grid);
         servicePathfinding = new ServicePathfinding(gridManager.Pathfinding,serviceGrid,serviceUnitLocation,allowsEnemyPassage,allowsAllyPassage);
-        serviceGridVisual = new ServiceGridVisual(gridManager.BorderOutliner,lineRendererPrefab,parent);
+        serviceGridVisual = new ServiceGridVisual(gridManager.BorderOutliner,lineRendererPrefab,transform);
     }
     
     //Pathfinding
@@ -152,17 +150,17 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
         return serviceUnitLocation.GetAllUnits();
     }
 
-    public bool HasLos(IUnit attacker, IUnit defender, out List<ICover> interferingCovers, out List<IUnit> interferingUnits)
+    public bool HasLos(IUnit attacker, IUnit defender, out List<ITile> interferingCovers, out List<IUnit> interferingUnits)
     {
         throw new System.NotImplementedException();
     }
 
-    public bool HasLos(ITile orig, ITile dest, out List<ICover> interferingCovers, out List<IUnit> interferingUnits)
+    public bool HasLos(ITile orig, ITile dest, out List<ITile> interferingCovers, out List<IUnit> interferingUnits)
     {
         throw new System.NotImplementedException();
     }
 
-    public float GetNormalizedCover(List<ICover> interferingCovers)
+    public float GetNormalizedCover(List<ITile> interferingCovers)
     {
         throw new System.NotImplementedException();
     }
@@ -172,7 +170,7 @@ public class BattlefieldServices : IServiceGrid, IServiceUnitLocation, IServiceP
         throw new System.NotImplementedException();
     }
 
-    public bool GetNormalizedCoverIfLoS(IUnit attacker, IUnit defender, out float cover, out List<ICover> interferingCovers, out List<IUnit> interfingUnits)
+    public bool GetNormalizedCoverIfLoS(IUnit attacker, IUnit defender, out float cover, out List<ITile> interferingCovers, out List<IUnit> interfingUnits)
     {
         throw new System.NotImplementedException();
     }

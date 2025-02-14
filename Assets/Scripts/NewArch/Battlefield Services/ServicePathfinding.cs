@@ -7,13 +7,13 @@ public class ServicePathfinding : IServicePathfinding
 {
     private IServiceGrid gridService;
     private IServiceUnitLocation unitLocationService;
-    private Pathfinding pathfinding;
+    private IPathfinding pathfinding;
     private IUnit _lastMovingUnit = null;
     private bool AllowsAllyPassage = true;
     private bool AllowsEnemyPassage = false;
 
 
-    public ServicePathfinding(Pathfinding pathfinding, IServiceGrid gridService, IServiceUnitLocation serviceUnitLocation, bool allowsEnemyPassage = false, bool allowsAllyPassage = true)
+    public ServicePathfinding(IPathfinding pathfinding, IServiceGrid gridService, IServiceUnitLocation serviceUnitLocation, bool allowsEnemyPassage = false, bool allowsAllyPassage = true)
     {
         this.pathfinding = pathfinding;
         this.gridService = gridService;
