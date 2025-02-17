@@ -5,9 +5,9 @@ public interface IAbility : IAbilityEvents
     bool IsAvailable();
     
     //The IUnit argument can be removed
-    bool IsValidTarget(ITarget target);
+    bool IsValidTarget(ISelectableTarget target);
     
-    void Command(ITarget target, Action onAbilityExecuted);
+    void Command(ISelectableTarget target, Action onAbilityExecuted);
 
     bool IsAutoTarget(); //To do: As a property
 

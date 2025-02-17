@@ -4,16 +4,16 @@ using UnityEngine;
 
 //The purpose of this class is to abstract the used Input Hardware from the game logic: either Mouse, Touch or or Controller. 
 //This is abstracted in the interface implemented by this class to reduce the dependency with the client.
-//This class depends on ISelectable interface
+//This class depends on ISelectableTarget interface
 public class MouseController2DLegacy : InputController
 {
     private IGrid<ITile> grid;
 
     protected override Vector3 GetCursorPosition() => Input.mousePosition;
-    protected override ISelectable GetSelectableUnderCursor(Vector3 cursorPosition)
+    protected override ISelectableTarget GetSelectableUnderCursor(Vector3 cursorPosition)
     {
         ITile selectedTile = grid.GetElement(grid.WorldToLocal(GetMouseWorldPosition()));
-        return selectedTile as ISelectable;
+        return selectedTile as ISelectableTarget;
     }	
 	protected override bool IsMainButtonPressed() => Input.GetMouseButtonDown(0);
 	protected override bool IsSecundaryButtonPressed() => Input.GetMouseButtonDown(1);

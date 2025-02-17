@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private IUnit _activeUnit;
     private IAbility _selectedAbility;
     //private IAbility _movementAbility;
-    private ITarget _selectedTarget;
+    private ISelectableTarget _selectedTarget;
     private List<IUnit> _eligibleUnits;
   
     public event Action<IUnit> UnitSelected;
@@ -49,36 +49,34 @@ public class PlayerController : MonoBehaviour
 
     
 
-    private void OnlyUnitSelectionClickHandler(ISelectable selectedElement)
+    private void OnlyUnitSelectionClickHandler(ISelectableTarget selectedElement)
     {
         HandleSelection(selectedElement);
     }
 
-    private void OnlyTargetSelectionClickHandler(ISelectable selectedElement)
+    private void OnlyTargetSelectionClickHandler(ISelectableTarget selectedElement)
     {
-        if (selectedElement != null)
+        if (selectedElement != null) //To Do: Maybe this if is redundant if IsValidTarget already checks for null
         {
-            ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(target))
+            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(selectedElement))
             {
-                SetTarget(target);
+                SetTarget(selectedElement);
                 OnAbilityCommanded();
-                _selectedAbility.Command(target, OnAbilityExecuted);
+                _selectedAbility.Command(selectedElement, OnAbilityExecuted);
             }
         }
     }
 
     //Handles both target and unit selection
-    private void OneClickHandler(ISelectable selectedElement)
+    private void OneClickHandler(ISelectableTarget selectedElement)
     {
         if (selectedElement != null)
         {
-            ITarget target = selectedElement as ITarget;
-            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(target))
+            if (IsAbilityActivatable() && _selectedAbility.IsValidTarget(selectedElement))
             {
-                SetTarget(target);
+                SetTarget(selectedElement);
                 OnAbilityCommanded();
-                _selectedAbility.Command(target, OnAbilityExecuted);
+                _selectedAbility.Command(selectedElement, OnAbilityExecuted);
             }
             else
             {
@@ -89,32 +87,30 @@ public class PlayerController : MonoBehaviour
     }
 
     //Handles both target and unit selection when target needs to be confirmed with second click
-    private void DoubleClickHandler(ISelectable selectedElement)
+    private void DoubleClickHandler(ISelectableTarget selectedElement)
     {
         // Implement double-click logic if needed
     }
 
-    private void SecondaryClickHandler(ISelectable selectedElement)
+    private void SecondaryClickHandler(ISelectableTarget selectedElement)
     {
         // Implement secondary click logic if needed (for example ability cancellation)
     }
 
-    private void OnHoverEnter(ISelectable hoveredElement)
+    private void OnHoverEnter(ISelectableTarget hoveredElement)
     {
         if (hoveredElement != null) //This checks is redundant since is already check in lower layer but add robustness
         {
-            ITarget target = hoveredElement as ITarget;
-            _selectedAbility?.OnTargetHoverEnter(target);
+            _selectedAbility?.OnTargetHoverEnter(hoveredElement);
             //_movementAbility?.OnTargetHoverEnter(target);
         }
     }
 
-    private void OnHoverExit(ISelectable hoveredElement)
+    private void OnHoverExit(ISelectableTarget hoveredElement)
     {
         if (hoveredElement != null) //This checks is redundant since is already check in lower layer but add robustness
         {
-            ITarget target = hoveredElement as ITarget;
-            _selectedAbility?.OnTargetHoverExit(target);
+            _selectedAbility?.OnTargetHoverExit(hoveredElement);
             //_movementAbility?.OnTargetHoverExit(target);
         }
     }
@@ -174,21 +170,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleSelection(ISelectable selectedElement)
+    private void HandleSelection(ISelectableTarget selectedElement)
     {
-        // //If selectedElement = null, unit will be also null without throwing an exception
-        // IUnit unit = selectedElement as IUnit;
-        // SelectUnit(unit); // being null if cast fails => Deselect unit
-
-        //Robuster approach:
-        if(selectedElement is ISelectableTarget selectableTarget)
+        if(selectedElement!=null)
         {
-            SelectUnit(selectableTarget.GetUnit); //GetUnit will be null if a tile has no unit => Deselect unit
+            //GetUnit will be null if a tile has no unit => Deselect unit
+            SelectUnit(selectedElement.GetUnit); 
         }
         else
         {
-            //if cast fails => Deselect unit
-            SelectUnit(null); //Can the cast really fail? Probably not, to do check this. This is just robustness code. Also the click can be ignore then
+            //The click can be ignore then and previously selected unit deselect
+            SelectUnit(null); 
         }
     }
 
@@ -268,7 +260,7 @@ public class PlayerController : MonoBehaviour
         return _selectedAbility != null && _activeUnit != null;
     }
 
-    private void SetTarget(ITarget target)
+    private void SetTarget(ISelectableTarget target)
     {
         _selectedTarget = target;
         // OnTargetSelected(target); // Fire events for VFX

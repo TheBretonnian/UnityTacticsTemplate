@@ -4,27 +4,27 @@ using UnityEngine;
 
 //The purpose of this class is to abstract the used Input Hardware from the game logic: either Mouse, Touch or or Controller. 
 //This is abstracted in the interface implemented by this class to reduce the dependency with the client.
-//This class depends on ISelectable interface
+//This class depends on ISelectableTarget interface
 public abstract class InputController : MonoBehaviour, IInputController
 {
 
     //Events
-    public event Action<ISelectable> MainCursorButtonClicked;
-    public event Action<ISelectable> SecondaryCursorButtonClicked;
+    public event Action<ISelectableTarget> MainCursorButtonClicked;
+    public event Action<ISelectableTarget> SecondaryCursorButtonClicked;
 
-    public event Action<ISelectable> SelectableHoverEntered;
-    public event Action<ISelectable> SelectableHoverExit;
+    public event Action<ISelectableTarget> SelectableHoverEntered;
+    public event Action<ISelectableTarget> SelectableHoverExit;
     
 
     //Protected members to be used by derived
-    protected ISelectable _currentSelectedObject;
-    protected ISelectable _currentHoverObject;
+    protected ISelectableTarget _currentSelectedObject;
+    protected ISelectableTarget _currentHoverObject;
     //Can be set to serializable to allow customization on Editor
     protected Camera _mainCamera;
 
     //Protected abstract methods to be override and used only in derived classes
     protected abstract Vector3 GetCursorPosition();
-    protected abstract ISelectable GetSelectableUnderCursor(Vector3 cursorPosition);
+    protected abstract ISelectableTarget GetSelectableUnderCursor(Vector3 cursorPosition);
     protected abstract bool IsMainButtonPressed();
     protected abstract bool IsSecundaryButtonPressed();
     
@@ -56,7 +56,7 @@ public abstract class InputController : MonoBehaviour, IInputController
         //Detect input events -> Abstract Input method and environment/2D/3D) from other scripts
         if (IsMainButtonPressed())
         {
-            ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
+            ISelectableTarget selectable = GetSelectableUnderCursor(GetCursorPosition());
             //New object selected?
             if(_currentSelectedObject != selectable) 
             {
@@ -64,14 +64,11 @@ public abstract class InputController : MonoBehaviour, IInputController
                 _currentSelectedObject = selectable;
                 _currentSelectedObject?.Selected();
             }
-            if (selectable != null) //Is this really needed here? To do: Check use cases in future
-            {
-                MainCursorButtonClicked?.Invoke(selectable);
-            }
+            MainCursorButtonClicked?.Invoke(selectable);
         }
         else if(IsSecundaryButtonPressed()) //Both left and right not allowed
         {
-            ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
+            ISelectableTarget selectable = GetSelectableUnderCursor(GetCursorPosition());
             //Allow invoking with null to implement logic with secondary cursor button click such as Cancel Ability
             SecondaryCursorButtonClicked?.Invoke(selectable);
         }
@@ -80,7 +77,7 @@ public abstract class InputController : MonoBehaviour, IInputController
 
     private void DetectHover()
     {
-        ISelectable selectable = GetSelectableUnderCursor(GetCursorPosition());
+        ISelectableTarget selectable = GetSelectableUnderCursor(GetCursorPosition());
 
         if(_currentHoverObject != selectable)
         {

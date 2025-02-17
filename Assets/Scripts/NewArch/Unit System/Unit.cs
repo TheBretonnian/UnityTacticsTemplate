@@ -26,9 +26,7 @@ public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
         throw new NotImplementedException();
     }
     
-
-    //ISelectableTarget:
-    //Public Properties ITarget
+    //Public Properties ISelectableTarget
     public bool IsUnit{get => true;}
     public IUnit GetUnit{get => this;}
 
@@ -55,5 +53,10 @@ public class Unit : MonoBehaviour, IUnit, ISelectableTarget{
     {
         //Set available action points to zero
         //fires UnitExhausted Global Event
+    }
+
+    public bool IsExhausted()
+    {
+        throw new NotImplementedException();
     }
 }//end Unit

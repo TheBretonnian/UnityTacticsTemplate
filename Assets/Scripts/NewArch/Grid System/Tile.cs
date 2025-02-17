@@ -24,7 +24,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public float HCost { get; set; } //Heuristic cost of the path from this node to the goal node
     public float MovingCost { get => tileData.MovementCost; }
 
-    //Public Properties ITarget
+    //Public Properties ISelectableTarget
     public bool IsUnit{get => false;}
     public IUnit GetUnit{get => Unit;}
     
@@ -52,12 +52,6 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
     public void ClearOutline() =>  tileVisual.ClearOutline();
     public void Reset() => tileVisual.Reset();
 
-    //Public methods IPathfinding
-    // public void UpdateFCost()
-    // {
-    //      FCost = GCost + HCost;
-    // }
-
     public bool IsWalkable()
     {
         //Implement walkable check rules here like:
@@ -66,6 +60,7 @@ public class Tile : MonoBehaviour, ITile, ITileVisual, IPathfindingNode , ISelec
 
     public bool IsOccupied() => Unit != null;
 
+    //public methods ISelectableTarget
     public void Selected()
     {
         throw new System.NotImplementedException();
